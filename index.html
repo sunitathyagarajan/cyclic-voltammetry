@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Cyclic Voltammetry Primer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,500;0,600;1,500&display=swap">
+<style>
+/* Layout: a lab-manual page. Sticky lesson index on the left, a 68ch reading column, and
+   wider instrument-style figure panels (plot + controls + readouts) that sit inside it. */
+:root{
+  --bg:#F3F5F6; --surface:#FCFDFD; --raise:#FFFFFF;
+  --ink:#13212B; --ink2:#45545E; --muted:#76838C;
+  --grid:#E2E7EA; --axis:#BCC6CC; --line:rgba(19,33,43,.12);
+  --accent:#1C5CAB; --accent-ink:#FFFFFF; --accent-wash:#E3ECF7;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --ref:#A3ADB4;
+  --q1:#86b6ef; --q2:#5598e7; --q3:#2a78d6; --q4:#256abf; --q5:#184f95; --q6:#0d366b;
+  --good:#006300; --good-wash:#E2F1E2; --bad:#B12A2A; --bad-wash:#F7E3E3;
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1317; --surface:#151C21; --raise:#1A2329;
+    --ink:#E6ECEF; --ink2:#A9B5BD; --muted:#7F8B93;
+    --grid:#232D34; --axis:#3B4852; --line:rgba(255,255,255,.10);
+    --accent:#6DA7EC; --accent-ink:#0B1A2B; --accent-wash:#1A2939;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --ref:#5D6971;
+    --q1:#1c5cab; --q2:#256abf; --q3:#3987e5; --q4:#5598e7; --q5:#86b6ef; --q6:#b7d3f6;
+    --good:#4CC44C; --good-wash:#152B18; --bad:#EE7B7B; --bad-wash:#371C1C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1317; --surface:#151C21; --raise:#1A2329;
+  --ink:#E6ECEF; --ink2:#A9B5BD; --muted:#7F8B93;
+  --grid:#232D34; --axis:#3B4852; --line:rgba(255,255,255,.10);
+  --accent:#6DA7EC; --accent-ink:#0B1A2B; --accent-wash:#1A2939;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --ref:#5D6971;
+  --q1:#1c5cab; --q2:#256abf; --q3:#3987e5; --q4:#5598e7; --q5:#86b6ef; --q6:#b7d3f6;
+  --good:#4CC44C; --good-wash:#152B18; --bad:#EE7B7B; --bad-wash:#371C1C;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font:16px/1.62 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 80px;display:grid;grid-template-columns:190px minmax(0,1fr);gap:56px}
+main{min-width:0;container-type:inline-size}
+h1,h2,h3{font-family:var(--serif);font-weight:600;text-wrap:balance;margin:0;color:var(--ink)}
+h1{font-size:clamp(2.1rem,4.6vw,3.4rem);line-height:1.08;letter-spacing:-.01em}
+h2{font-size:clamp(1.55rem,3vw,2rem);line-height:1.2}
+h3{font-size:1.2rem;line-height:1.3;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+sub,sup{font-size:.72em;line-height:0}
+.eyebrow{font:500 .75rem/1.2 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.prose{max-width:68ch;display:flex;flex-direction:column;gap:14px}
+.prose ul,.prose ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:6px}
+.lede{font-size:1.14rem;color:var(--ink2);max-width:62ch}
+.mono{font-family:var(--mono)}
+.note{font-size:.9rem;color:var(--ink2)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* index */
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 28px);align-self:start;padding-top:44px}
+nav.toc .eyebrow{margin-bottom:12px;display:block}
+nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;counter-reset:toc}
+nav.toc a{display:flex;gap:10px;align-items:baseline;padding:6px 8px;border-radius:6px;color:var(--ink2);text-decoration:none;font-size:.92rem;line-height:1.3}
+nav.toc a span{font:500 .72rem var(--mono);color:var(--muted);min-width:1.4em}
+nav.toc a:hover{background:var(--accent-wash);color:var(--ink)}
+nav.toc a.on{color:var(--ink);background:var(--accent-wash)}
+nav.toc a.on span{color:var(--accent)}
+
+/* sections */
+section{padding-block:60px 12px;display:flex;flex-direction:column;gap:22px;scroll-margin-top:24px}
+section+section{border-top:1px solid var(--line)}
+.sec-head{display:flex;flex-direction:column;gap:8px}
+.hero{padding-block:52px 28px;display:flex;flex-direction:column;gap:22px}
+
+/* equations */
+.eq{font-family:var(--serif);font-size:1.15rem;padding:14px 18px;background:var(--surface);border:1px solid var(--line);border-radius:8px;display:block;line-height:1.9;overflow-x:auto;max-width:68ch}
+.eq .lbl{font:500 .7rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;line-height:1.3;margin-bottom:6px}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;margin:0 2px}
+.frac>span:first-child{border-bottom:1px solid currentColor;padding:0 3px}
+.frac>span:last-child{padding:0 3px}
+.eq .gloss{font:400 .86rem/1.5 var(--sans);color:var(--ink2);display:block;margin-top:8px}
+
+/* figure panels */
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:22px}
+.fig.wide{grid-template-columns:minmax(0,1fr)}
+.fig .side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.fig figcaption,.cap{font-size:.84rem;color:var(--muted);line-height:1.45}
+.fig-title{font:600 .95rem/1.3 var(--sans);color:var(--ink)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}
+.hero-fig{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:22px}
+@container (max-width:900px){.fig{grid-template-columns:minmax(0,1fr)}}
+@container (max-width:600px){.two,.hero-fig{grid-template-columns:minmax(0,1fr)}}
+
+/* chart */
+.chart{position:relative;min-width:0}
+.chart .plot{width:100%}
+.chart svg{display:block;width:100%;overflow:visible;touch-action:pan-y}
+.chart .legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.8rem;color:var(--ink2);margin-bottom:6px;min-height:0}
+.chart .legend:empty{display:none}
+.chart .legend .k{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.tip{position:absolute;pointer-events:none;background:var(--raise);color:var(--ink);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.12);border-radius:6px;padding:6px 9px;font:12px/1.45 var(--mono);white-space:nowrap;z-index:3}
+.tip b{font:600 12px var(--sans);display:block}
+
+/* controls */
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl label,.ctl .lab{font:500 .8rem var(--sans);color:var(--ink2);display:flex;justify-content:space-between;gap:8px}
+.ctl output{font:500 .8rem var(--mono);color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;padding:3px;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.seg button{font:500 .8rem var(--sans);color:var(--ink2);background:transparent;border:0;border-radius:6px;padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--raise);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.btn{font:500 .85rem var(--sans);color:var(--accent-ink);background:var(--accent);border:0;border-radius:7px;padding:8px 14px;cursor:pointer;align-self:flex-start}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* readouts */
+dl.ro{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:.84rem;border-top:1px solid var(--line);padding-top:12px}
+dl.ro dt{color:var(--ink2)}
+dl.ro dd{margin:0;font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 .74rem var(--sans);letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.chip i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.stage{font-size:.9rem;line-height:1.5;color:var(--ink2);background:var(--bg);border-radius:8px;padding:12px}
+.stage b{color:var(--ink);display:block;margin-bottom:2px}
+
+/* composition bar (segmented, tall) */
+.comp{display:flex;gap:2px;height:28px;border-radius:4px;overflow:hidden}
+.comp div{display:flex;align-items:center;padding:0 8px;font:600 .75rem var(--mono);color:#fff;white-space:nowrap;min-width:0;overflow:hidden;transition:flex-basis .15s}
+.comp .o{background:var(--s2)} .comp .r{background:var(--s1)}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:560px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font:600 .78rem var(--sans);color:var(--ink2);background:var(--bg)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.tbl.small table{min-width:420px;font-size:.82rem}
+.tbl.small td,.tbl.small th{padding:6px 10px}
+
+/* compound cards */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@container (max-width:880px){.cards{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card h3{font-size:1.08rem}
+.card .formula{font:500 .8rem var(--mono);color:var(--ink2)}
+.card p{font-size:.88rem;color:var(--ink2);line-height:1.5}
+
+/* electrodes list */
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;max-width:880px}
+@media (max-width:760px){.trio{grid-template-columns:minmax(0,1fr)}}
+.trio div{border-top:2px solid var(--ink);padding-top:10px;display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--ink2)}
+.trio b{font:600 .95rem var(--sans);color:var(--ink)}
+
+.callout{max-width:68ch;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px 16px;font-size:.92rem;color:var(--ink2);display:flex;flex-direction:column;gap:6px}
+.callout b{color:var(--ink)}
+
+/* quiz */
+.scorebar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:4;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:10px 14px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.scorebar .s{font:500 .95rem var(--mono)}
+.pips{display:flex;gap:4px}
+.pips i{width:14px;height:8px;border-radius:2px;background:var(--grid)}
+.pips i.ok{background:var(--good)} .pips i.no{background:var(--bad)}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;scroll-margin-top:80px}
+@container (max-width:780px){.q{grid-template-columns:minmax(0,1fr)}}
+@container (max-width:520px){.pips{display:none}.scorebar{padding:6px 10px}.scorebar .btn{padding:6px 10px}}
+.q .qn{font:500 .78rem var(--mono);color:var(--muted);letter-spacing:.06em}
+.q .qtext{font-size:1rem;line-height:1.55;color:var(--ink)}
+.q .qside{display:flex;flex-direction:column;gap:12px;min-width:0}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;font:400 .93rem/1.4 var(--sans);color:var(--ink);background:var(--raise);border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer}
+.opt:hover:not([disabled]){border-color:var(--accent)}
+.opt .L{font:600 .78rem var(--mono);color:var(--muted);min-width:1.2em;padding-top:2px}
+.opt[disabled]{cursor:default}
+.opt.right{background:var(--good-wash);border-color:var(--good)}
+.opt.wrong{background:var(--bad-wash);border-color:var(--bad)}
+.opt .mark{margin-left:auto;font:600 .78rem var(--sans);white-space:nowrap;padding-top:2px}
+.opt.right .mark{color:var(--good)} .opt.wrong .mark{color:var(--bad)}
+.explain{font-size:.9rem;line-height:1.55;color:var(--ink2);border-left:3px solid var(--line);padding:2px 0 2px 12px}
+.explain b{color:var(--ink)}
+footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted);max-width:80ch;display:flex;flex-direction:column;gap:6px}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+  nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+  nav.toc .eyebrow{display:none}
+  nav.toc ol{flex-direction:row;gap:2px;white-space:nowrap}
+  .scorebar{top:calc(env(safe-area-inset-top,0px) + 56px)}
+  section{scroll-margin-top:64px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Lesson sections">
+  <span class="eyebrow">Lesson</span>
+  <ol>
+    <li><a href="#setup"><span>01</span>The experiment</a></li>
+    <li><a href="#thermo"><span>02</span>Thermodynamics</a></li>
+    <li><a href="#kinetics"><span>03</span>Reversibility</a></li>
+    <li><a href="#conc"><span>04</span>Concentration</a></li>
+    <li><a href="#rate"><span>05</span>Scan rate</a></li>
+    <li><a href="#quiz"><span>06</span>Check yourself</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hero">
+  <span class="eyebrow">Pre-lab module · Analytical electrochemistry</span>
+  <h1>Cyclic Voltammetry Primer</h1>
+  <p class="lede">Before your first scan, work through what sets the position of a peak (thermodynamics), what sets its shape (electron-transfer kinetics), and how the two knobs you will turn in lab, concentration and scan rate, change the signal. Every curve on this page is computed live from a diffusion simulation, so the plots respond to the controls the way a real cell would.</p>
+  <div class="fig wide">
+    <div class="hero-fig">
+      <div>
+        <div class="fig-title">What the potentiostat applies</div>
+        <div id="heroWave" class="chart" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="fig-title">What you record: the cyclic voltammogram</div>
+        <div id="heroCV" class="chart" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="row" style="justify-content:space-between">
+      <p class="cap">Simulated: 1 mM ferrocene in acetonitrile with 0.1 M TBAPF<sub>6</sub>, 3 mm glassy-carbon disk, 100 mV s<sup>−1</sup>. The dot moves through time on the left and through the voltammogram on the right. Hover or tap any plot on this page to read values.</p>
+      <button class="btn ghost" id="heroPlay" type="button">Pause</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 01 ============ -->
+<section id="setup">
+  <div class="sec-head"><span class="eyebrow">01 · Setup</span><h2>The experiment in one paragraph</h2></div>
+  <div class="prose">
+    <p>A potentiostat sweeps the potential of a small <b>working electrode</b> linearly in time, from a starting potential <i>E</i><sub>i</sub> to a <b>switching potential</b> <i>E</i><sub>λ</sub>, then back again, at a constant <b>scan rate</b> <i>v</i> (V s<sup>−1</sup>). It records the current that flows as molecules near the electrode are oxidized or reduced. Plotting current against potential gives the cyclic voltammogram (CV): a pair of peaks whose positions, sizes and separation report on the thermodynamics and kinetics of the redox couple.</p>
+  </div>
+  <div class="trio">
+    <div><b>Working electrode</b>Where the reaction you study happens. Glassy carbon, Pt or Au disk, polished before use. Its area <i>A</i> sets the current scale.</div>
+    <div><b>Reference electrode</b>Holds a fixed, known potential so <i>E</i> has a scale. Here Ag/AgCl (3 M KCl); SCE is also common. No current passes through it.</div>
+    <div><b>Counter electrode</b>A Pt wire that carries the current needed to balance the working electrode, closing the circuit.</div>
+  </div>
+  <div class="prose">
+    <p>Three conditions make the current interpretable. The solution contains about 0.1 M of inert <b>supporting electrolyte</b>, which carries charge so the analyte does not migrate in the field. The solution is <b>not stirred</b> during the scan, so the analyte reaches the electrode only by diffusion. And dissolved O<sub>2</sub> is removed by bubbling N<sub>2</sub> or Ar, because O<sub>2</sub> is reduced at negative potentials and adds its own wave.</p>
+  </div>
+  <div class="callout"><b>Sign convention used here (IUPAC)</b><span>Potential increases to the right and <b>oxidation (anodic) current is positive</b>. Some textbooks and instrument software use the older US convention, with the axes flipped. Check which one your potentiostat uses before you compare plots.</span></div>
+</section>
+
+<!-- ============ 02 ============ -->
+<section id="thermo">
+  <div class="sec-head"><span class="eyebrow">02 · Thermodynamics</span><h2>Where the peaks appear</h2></div>
+  <div class="prose">
+    <p>Consider a one-step couple, O + <i>n</i>e<sup>−</sup> ⇌ R. The electrode potential is a measure of the free energy of electrons in the electrode. Making the electrode more positive lowers that energy, so electrons leave R and oxidation becomes favorable. Making it more negative raises it, so electrons enter O and reduction becomes favorable. The link between potential and free energy is</p>
+  </div>
+  <div class="eq"><span class="lbl">Free energy and potential</span>Δ<i>G</i>° = −<i>nF</i><i>E</i>°<span class="gloss"><i>F</i> = 96 485 C mol<sup>−1</sup>. A positive <i>E</i>° (vs SHE) means O is a good oxidant: its reduction is spontaneous against the hydrogen electrode.</span></div>
+  <div class="prose">
+    <p>The key idea for CV is that the applied potential fixes the <b>ratio of O to R right at the electrode surface</b>, not in the bulk solution. For a fast (reversible) couple this ratio obeys the Nernst equation at every instant of the scan:</p>
+  </div>
+  <div class="eq"><span class="lbl">Nernst equation at the surface</span><i>E</i> = <i>E</i>°′ + <span class="frac"><span><i>RT</i></span><span><i>nF</i></span></span> ln <span class="frac"><span><i>C</i><sub>O</sub>(0, <i>t</i>)</span><span><i>C</i><sub>R</sub>(0, <i>t</i>)</span></span> &nbsp;=&nbsp; <i>E</i>°′ + <span class="frac"><span>0.05916 V</span><span><i>n</i></span></span> log <span class="frac"><span><i>C</i><sub>O</sub>(0, <i>t</i>)</span><span><i>C</i><sub>R</sub>(0, <i>t</i>)</span></span><span class="gloss">At 25 °C, each 59.2/<i>n</i> mV change in <i>E</i> shifts the surface ratio tenfold. <i>C</i>(0, <i>t</i>) means concentration at distance 0 from the electrode at time <i>t</i>.</span></div>
+
+  <div class="fig">
+    <div>
+      <div class="fig-title">Nernst explorer: surface composition versus potential</div>
+      <div id="nernstChart" class="chart" style="margin-top:8px"></div>
+    </div>
+    <div class="side">
+      <div class="ctl"><label for="nE">E − E°′ <output id="nEo">+0 mV</output></label><input id="nE" type="range" min="-200" max="200" step="1" value="30"></div>
+      <div class="ctl"><span class="lab">Electrons transferred, n</span><div class="seg" id="nN"></div></div>
+      <div class="ctl"><span class="lab">At the surface</span><div class="comp" id="nComp"><div class="o"></div><div class="r"></div></div></div>
+      <dl class="ro">
+        <dt>[O]/[R] at surface</dt><dd id="nRatio">–</dd>
+        <dt>Fraction oxidized</dt><dd id="nFrac">–</dd>
+        <dt>ΔG for R → O</dt><dd id="nG">–</dd>
+      </dl>
+      <p class="cap">ΔG = −nF(E − E°′) per mole for oxidizing R at the applied potential. Negative means oxidation is downhill.</p>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h3>Standard, formal and half-wave potentials</h3>
+    <p><b><i>E</i>°</b> is defined for unit activities. In a real solution you measure the <b>formal potential <i>E</i>°′</b>, which folds in activity coefficients, ionic strength, ion pairing, complexation and pH. That is the number a CV gives you. On the voltammogram you read it as the <b>half-wave potential</b>, the midpoint of the two peaks:</p>
+  </div>
+  <div class="eq"><span class="lbl">Reading E°′ from a reversible CV</span><i>E</i><sub>½</sub> = <span class="frac"><span><i>E</i><sub>pa</sub> + <i>E</i><sub>pc</sub></span><span>2</span></span> = <i>E</i>°′ + <span class="frac"><span><i>RT</i></span><span><i>nF</i></span></span> ln <span class="frac"><span><i>D</i><sub>R</sub><sup>½</sup></span><span><i>D</i><sub>O</sub><sup>½</sup></span></span> ≈ <i>E</i>°′<span class="gloss">The diffusion-coefficient term is usually a few millivolts, so <i>E</i><sub>½</sub> is taken as <i>E</i>°′.</span></div>
+
+  <div class="prose">
+    <h3>Why the current makes a peak</h3>
+    <p>Current is set by how fast reactant reaches the surface, which is the slope of its concentration profile there: <i>i</i> = <i>nFAD</i>(∂<i>C</i>/∂<i>x</i>)<sub><i>x</i>=0</sub>. Two effects compete. As the potential passes <i>E</i>°′, Nernst forces the surface concentration of reactant down, which steepens the gradient and raises the current. At the same time the depleted zone (the <b>diffusion layer</b>, roughly √(<i>Dt</i>) thick) keeps growing into the solution, which flattens the gradient. Rising first, then falling: that is the peak. Step through one scan below and watch the profiles.</p>
+  </div>
+  <div class="fig">
+    <div class="two">
+      <div><div class="fig-title">Position on the CV</div><div id="profCV" class="chart" style="margin-top:8px"></div></div>
+      <div><div class="fig-title">Concentration near the electrode</div><div id="profChart" class="chart" style="margin-top:8px"></div></div>
+    </div>
+    <div class="side">
+      <div class="ctl"><label for="pT">Time in scan <output id="pTo">0 s</output></label><input id="pT" type="range" min="0" max="159" step="1" value="44"></div>
+      <div class="row"><button class="btn" id="pPlay" type="button">Play scan</button></div>
+      <div class="stage" id="pStage"></div>
+      <dl class="ro">
+        <dt>Applied E</dt><dd id="pE">–</dd>
+        <dt>[Fc⁺]/[Fc] surface</dt><dd id="pRat">–</dd>
+        <dt>Nernst predicts</dt><dd id="pNer">–</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 ============ -->
+<section id="kinetics">
+  <div class="sec-head"><span class="eyebrow">03 · Kinetics</span><h2>Reversible, quasi-reversible and irreversible</h2></div>
+  <div class="prose">
+    <p>Nernst tells you where the surface ratio <i>wants</i> to be. Whether it gets there depends on how fast electrons cross the interface. That rate is described by the standard heterogeneous rate constant <b><i>k</i>°</b> (cm s<sup>−1</sup>) and the transfer coefficient <b>α</b> (usually near 0.5) in the Butler–Volmer expressions</p>
+  </div>
+  <div class="eq"><span class="lbl">Butler–Volmer rate constants</span><i>k</i><sub>red</sub> = <i>k</i>° exp[−α<i>nf</i>(<i>E</i> − <i>E</i>°′)] &nbsp;&nbsp; <i>k</i><sub>ox</sub> = <i>k</i>° exp[(1 − α)<i>nf</i>(<i>E</i> − <i>E</i>°′)]<span class="gloss"><i>f</i> = <i>F</i>/<i>RT</i> = 38.9 V<sup>−1</sup> at 25 °C. Moving <i>E</i> away from <i>E</i>°′ speeds one direction exponentially and slows the other.</span></div>
+  <div class="prose">
+    <p>What decides the shape of the CV is <i>k</i>° compared with the rate of diffusion on the time scale of the scan. Matsuda and Ayabe expressed that comparison as one dimensionless number:</p>
+  </div>
+  <div class="eq"><span class="lbl">Matsuda–Ayabe parameter</span>Λ = <span class="frac"><span><i>k</i>°</span><span>(<i>D n f v</i>)<sup>½</sup></span></span><span class="gloss"><b>Λ ≥ 15:</b> reversible. &nbsp;<b>15 &gt; Λ &gt; 10<sup>−2(1+α)</sup>:</b> quasi-reversible. &nbsp;<b>Λ ≤ 10<sup>−2(1+α)</sup>:</b> irreversible. Because <i>v</i> is in the denominator, the same couple can look reversible at a slow scan and quasi-reversible at a fast one.</span></div>
+  <div class="prose">
+    <ul>
+      <li><b>Reversible (Nernstian).</b> Electron transfer is so fast that the surface stays at Nernstian equilibrium throughout the scan. Diffusion alone limits the current, and the peaks sit symmetrically about <i>E</i>°′.</li>
+      <li><b>Quasi-reversible.</b> Electron transfer and diffusion are comparably fast. Extra driving force (overpotential) is needed, so the anodic peak moves positive, the cathodic peak moves negative, and the separation grows as the scan speeds up.</li>
+      <li><b>Irreversible.</b> Electron transfer is so slow that the back reaction is negligible near the forward peak. The forward peak is broad and shifted far past <i>E</i>°′, and the return peak is pushed so far away that it usually falls outside the scan window.</li>
+    </ul>
+    <p class="note">Do not confuse <b>electrochemical</b> reversibility (fast electron transfer, the topic here) with <b>chemical</b> reversibility (the product survives long enough to be converted back). A product that decays by a follow-up chemical reaction shrinks the return peak even when electron transfer is fast. You will meet that case in the quiz.</p>
+  </div>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Diagnostic at 25 °C</th><th>Reversible</th><th>Quasi-reversible</th><th>Irreversible</th></tr></thead>
+    <tbody>
+      <tr><td>Peak separation ΔE<sub>p</sub> = |E<sub>pa</sub> − E<sub>pc</sub>|</td><td>57–59 mV / n, independent of v</td><td>Larger than 59/n mV and grows with v</td><td>Very large; return peak often absent</td></tr>
+      <tr><td>Peak potential as v increases</td><td>Constant</td><td>Moves outward</td><td>Shifts 29.6/(αn) mV per tenfold increase in v</td></tr>
+      <tr><td>Peak current</td><td>i<sub>p</sub> ∝ v<sup>½</sup> (Randles–Sevcik)</td><td>≈ ∝ v<sup>½</sup>, a little below the reversible value</td><td>i<sub>p</sub> ∝ v<sup>½</sup>, with an (αn)<sup>½</sup> factor</td></tr>
+      <tr><td>Peak-current ratio i<sub>p,return</sub> / i<sub>p,forward</sub></td><td>1</td><td>≈ 1 if there is no follow-up chemistry</td><td>Not defined (no return peak)</td></tr>
+      <tr><td>Peak width |E<sub>p</sub> − E<sub>p/2</sub>|</td><td>56.5 / n mV</td><td>Broader than reversible</td><td>47.7 / (αn) mV</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="prose"><h3>Three compounds, three behaviors</h3><p>These are compounds you are likely to meet in a teaching lab. Each curve is simulated with literature-typical parameters for the conditions listed; real rate constants depend heavily on how the electrode was polished, so your own ΔE<sub>p</sub> values may differ.</p></div>
+  <div class="cards" id="cards"></div>
+
+  <div class="prose"><h3>Turn the rate constant yourself</h3><p>A generic one-electron couple at 100 mV s<sup>−1</sup>. Slide <i>k</i>° down from fast to slow and watch the peaks pull apart, flatten and finally lose their return wave. The dashed trace is the reversible limit for comparison.</p></div>
+  <div class="fig">
+    <div><div id="kChart" class="chart"></div></div>
+    <div class="side">
+      <div class="ctl"><label for="kK">log k° (cm s⁻¹) <output id="kKo">–</output></label><input id="kK" type="range" min="-7" max="0" step="0.1" value="-2.5"></div>
+      <div class="ctl"><label for="kA">Transfer coefficient α <output id="kAo">0.50</output></label><input id="kA" type="range" min="0.3" max="0.7" step="0.05" value="0.5"></div>
+      <div><span class="chip" id="kZone"><i></i>–</span></div>
+      <dl class="ro">
+        <dt>Λ</dt><dd id="kL">–</dd>
+        <dt>E<sub>pa</sub> − E°′</dt><dd id="kEpa">–</dd>
+        <dt>E<sub>pc</sub> − E°′</dt><dd id="kEpc">–</dd>
+        <dt>ΔE<sub>p</sub></dt><dd id="kdE">–</dd>
+        <dt>i<sub>pa</sub></dt><dd id="kip">–</dd>
+      </dl>
+      <p class="cap">1 mM, D = 1.0 × 10⁻⁵ cm² s⁻¹, A = 0.0707 cm², n = 1. Try α = 0.3 and 0.7 at log k° = −5 to see the peaks shift unevenly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 ============ -->
+<section id="conc">
+  <div class="sec-head"><span class="eyebrow">04 · Concentration</span><h2>Peak current measures concentration</h2></div>
+  <div class="prose">
+    <p>For a freely diffusing, reversible couple the peak current is given by the <b>Randles–Sevcik equation</b>. Every term except concentration is fixed by the compound, the electrode and the scan rate, so at constant <i>v</i> the peak current is <b>directly proportional to bulk concentration</b>. That is what makes CV quantitative: you can build a calibration line from standards and read an unknown from it.</p>
+  </div>
+  <div class="eq"><span class="lbl">Randles–Sevcik, 25 °C (reversible)</span><i>i</i><sub>p</sub> = (2.69 × 10<sup>5</sup>) <i>n</i><sup>3/2</sup> <i>A</i> <i>D</i><sup>½</sup> <i>C</i> <i>v</i><sup>½</sup><span class="gloss"><i>i</i><sub>p</sub> in A, <i>A</i> in cm², <i>D</i> in cm² s⁻¹, <i>C</i> in mol cm⁻³ (1 mM = 1 × 10⁻⁶ mol cm⁻³), <i>v</i> in V s⁻¹. For an irreversible wave the constant becomes 2.99 × 10<sup>5</sup> <i>n</i>(α<i>n</i>)<sup>½</sup>.</span></div>
+  <div class="prose"><p>Notice in the plot that the peak <i>potentials</i> do not move with concentration; only the current scale changes. If your peaks drift apart at high concentration in lab, the usual cause is uncompensated solution resistance (iR drop), not chemistry.</p></div>
+  <div class="fig">
+    <div class="two">
+      <div><div class="fig-title">CVs of standards and a sample</div><div id="cCV" class="chart" style="margin-top:8px"></div></div>
+      <div><div class="fig-title">Calibration line</div><div id="cCal" class="chart" style="margin-top:8px"></div></div>
+    </div>
+    <div class="side">
+      <div class="ctl"><span class="lab">Compound</span><div class="seg" id="cCmp"></div></div>
+      <div class="ctl"><label for="cC">Sample concentration <output id="cCo">–</output></label><input id="cC" type="range" min="0.25" max="6" step="0.05" value="2.6"></div>
+      <dl class="ro">
+        <dt>Simulated |i<sub>p</sub>|</dt><dd id="cIp">–</dd>
+        <dt id="cEqLab">Randles–Sevcik</dt><dd id="cRS">–</dd>
+        <dt>Calibration slope</dt><dd id="cSl">–</dd>
+        <dt>E<sub>p</sub> (forward)</dt><dd id="cEp">–</dd>
+      </dl>
+      <p class="cap" id="cNote"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 ============ -->
+<section id="rate">
+  <div class="sec-head"><span class="eyebrow">05 · Scan rate</span><h2>What scan rate does to the signal</h2></div>
+  <div class="prose">
+    <p>Scanning faster gives the diffusion layer less time to grow, so at the peak the concentration gradient is steeper and the current larger. For a freely diffusing species the peak current grows as <b>√<i>v</i></b>. A plot of <i>i</i><sub>p</sub> against <i>v</i><sup>½</sup> that is straight and passes through the origin is your evidence for diffusion control. A species <b>adsorbed</b> on the electrode does not need to diffuse, so its peak current grows linearly with <i>v</i> instead.</p>
+    <p>Scan rate is also your probe of kinetics, because it sets the time scale in Λ. Peaks of a reversible couple stay put. Peaks of a quasi-reversible couple move apart as <i>v</i> rises. An irreversible peak shifts by a fixed amount per decade of <i>v</i>, which gives you α<i>n</i>.</p>
+    <p class="note">One practical limit: the background charging current of the electrode double layer, <i>i</i><sub>c</sub> = <i>AC</i><sub>dl</sub><i>v</i>, grows linearly with <i>v</i>, faster than the faradaic signal. At very high scan rates it can swamp the peaks. Record a blank in electrolyte alone so you can subtract it.</p>
+  </div>
+  <div class="fig wide">
+    <div class="row" style="justify-content:space-between;gap:16px">
+      <div class="ctl"><span class="lab">Compound</span><div class="seg" id="rCmp"></div></div>
+      <div class="ctl"><span class="lab">Current axis</span><div class="seg" id="rNorm"></div></div>
+    </div>
+    <div><div class="fig-title" id="rTitle">CVs at six scan rates</div><div id="rCV" class="chart" style="margin-top:8px"></div></div>
+    <div class="two">
+      <div><div class="fig-title">Peak current versus √v</div><div id="rIp" class="chart" style="margin-top:8px"></div></div>
+      <div><div class="fig-title">Peak potential versus log v</div><div id="rEp" class="chart" style="margin-top:8px"></div></div>
+    </div>
+    <div class="tbl small"><table id="rTbl"></table></div>
+    <p class="cap" id="rNote"></p>
+  </div>
+  <div class="callout">
+    <b>Before you go into lab</b>
+    <span>Polish the working electrode and rinse it. Degas for 5–10 minutes and keep an inert blanket over the solution. Record a blank in supporting electrolyte. Use the same potential window for every scan. Wait between scans (or stir briefly, then let the solution settle) so each scan starts from fresh bulk solution. Run at least five scan rates so you can test the √v dependence.</span>
+  </div>
+</section>
+
+<!-- ============ 06 ============ -->
+<section id="quiz">
+  <div class="sec-head"><span class="eyebrow">06 · Check yourself</span><h2>Ten questions, all from plots</h2></div>
+  <div class="prose"><p>Each question gives you a voltammogram or a derived plot. Hover or tap the curves to read exact values. You get one attempt per question; the explanation appears after you answer.</p></div>
+  <div class="scorebar"><span class="s" id="qScore">Score 0 / 10</span><div class="pips" id="qPips"></div><button class="btn ghost" id="qReset" type="button">Clear answers</button></div>
+  <div id="quizList" style="display:flex;flex-direction:column;gap:18px"></div>
+</section>
+
+<footer>
+  <span>Simulation: one-step electron transfer O + ne⁻ ⇌ R with Butler–Volmer kinetics, semi-infinite linear diffusion, equal diffusion coefficients for O and R, explicit finite differences (1 mV steps). Charging current and iR drop are not included. Potentials are quoted against Ag/AgCl (3 M KCl); values for non-aqueous ferrocene are approximate because of the liquid-junction potential.</span>
+  <span>Further reading: Elgrishi et al., “A Practical Beginner’s Guide to Cyclic Voltammetry,” J. Chem. Educ. 2018, 95, 197–206. Bard &amp; Faulkner, Electrochemical Methods, ch. 6.</span>
+</footer>
+</main>
+</div>
+
+<script>
+"use strict";
+/* ---------------- physics ---------------- */
+const FARADAY=96485.332, RGAS=8.314462, TEMP=298.15, f=FARADAY/(RGAS*TEMP);
+const AREA=0.0707;
+
+function simulateCV(p){
+  const {E0,k0,alpha=0.5,n=1,D=1e-5,C=1,A=AREA,v=0.1,Ei,Es,start='R',kc=0,dE=0.001,snapEvery=0}=p;
+  const Cb=C*1e-6, dir=Es>Ei?1:-1, nHalf=Math.round(Math.abs(Es-Ei)/dE), nT=2*nHalf;
+  const dt=dE/v, lam=0.45, dx=Math.sqrt(D*dt/lam), N=Math.ceil(6*Math.sqrt(D*nT*dt)/dx)+3;
+  let cO=new Float64Array(N), cR=new Float64Array(N), nO=new Float64Array(N), nR=new Float64Array(N);
+  const bO=start==='O'?Cb:0, bR=start==='R'?Cb:0; cO.fill(bO); cR.fill(bR);
+  const kcO=start==='R'?kc*dt:0, kcR=start==='O'?kc*dt:0;
+  const E=new Float64Array(nT+1), I=new Float64Array(nT+1), snaps=[];
+  E[0]=Ei; const nf=n*f;
+  for(let k=1;k<=nT;k++){
+    const Ek=k<=nHalf?Ei+dir*k*dE:Es-dir*(k-nHalf)*dE;
+    for(let i=1;i<N-1;i++){
+      nO[i]=cO[i]+lam*(cO[i+1]-2*cO[i]+cO[i-1])-kcO*cO[i];
+      nR[i]=cR[i]+lam*(cR[i+1]-2*cR[i]+cR[i-1])-kcR*cR[i];
+    }
+    nO[N-1]=bO; nR[N-1]=bR;
+    const eta=Ek-E0, kf=k0*Math.exp(-alpha*nf*eta), kb=k0*Math.exp((1-alpha)*nf*eta);
+    const a=4*nO[1]-nO[2], b=4*nR[1]-nR[2];
+    let J;
+    if(!(kf<1e8&&kb<1e8)){const th=Math.exp(nf*eta);J=((a-th*b)/(1+th))*D/(2*dx);}
+    else J=(kf*a-kb*b)/3/(1+2*dx*(kf+kb)/(3*D));
+    const g=2*dx*J/D;
+    nO[0]=Math.max(0,(a-g)/3); nR[0]=Math.max(0,(b+g)/3);
+    let t=cO;cO=nO;nO=t;t=cR;cR=nR;nR=t;
+    E[k]=Ek; I[k]=-n*FARADAY*A*J*1e6;
+    if(snapEvery&&k%snapEvery===0) snaps.push({k,t:k*dt,E:Ek,i:I[k],O:Float32Array.from(cO,x=>x/Cb),R:Float32Array.from(cR,x=>x/Cb)});
+  }
+  return {E,I,nHalf,dx,N,snaps,dir,dt,p};
+}
+function analyze(s){
+  const {E,I,nHalf,dir}=s; let fi=1, ri=nHalf+1;
+  for(let k=1;k<=nHalf;k++) if(dir*I[k]>dir*I[fi]) fi=k;
+  for(let k=nHalf+1;k<I.length;k++) if(-dir*I[k]>-dir*I[ri]) ri=k;
+  const ipf=I[fi], ipr=I[ri], isp=I[nHalf];
+  const hasReturn=ri<I.length-4&&ri>nHalf+4&&(-dir*ipr)>0.02*Math.abs(ipf);
+  const ratio=Math.abs(ipr/ipf)+0.485*Math.abs(isp/ipf)+0.086; // Nicholson baseline correction
+  return {fi,ri,ipf,Epf:E[fi],ipr,Epr:E[ri],dEp:Math.abs(E[fi]-E[ri]),Ehalf:(E[fi]+E[ri])/2,ratio,hasReturn,iprCorr:ratio*Math.abs(ipf)};
+}
+const _cache=new Map();
+function sim(p){const k=JSON.stringify(p);if(!_cache.has(k))_cache.set(k,simulateCV(p));return _cache.get(k);}
+const arr=a=>Array.from(a);
+function scaled(s,c){return arr(s.I).map(y=>y*c);}
+
+/* ---------------- formatting ---------------- */
+const MINUS='−';
+const sgn=(x,d)=>(x<0?MINUS:'+')+Math.abs(x).toFixed(d);
+const fV=x=>sgn(x,3)+' V';
+const fmV=x=>Math.round(x*1000)+' mV';
+const fmVs=x=>sgn(x*1000,0)+' mV';
+const fuA=x=>{const a=Math.abs(x);return (x<0?MINUS:'')+(a>=100?a.toFixed(0):a>=10?a.toFixed(1):a.toFixed(2))+' µA';};
+const minus=s=>String(s).replace(/-/g,MINUS);
+function sci(x){if(x===0)return '0';const e=Math.floor(Math.log10(Math.abs(x)));if(e>=-2&&e<4)return x.toPrecision(3).replace(/\.?0+$/,'');const m=x/Math.pow(10,e);return m.toFixed(2)+' × 10'+sup(e);}
+function sup(e){const m={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};return String(e).split('').map(c=>m[c]).join('');}
+
+/* ---------------- chart ---------------- */
+function niceStep(range,count){const raw=range/Math.max(1,count);const p=Math.pow(10,Math.floor(Math.log10(raw)));const m=raw/p;return (m<1.5?1:m<3?2:m<7?5:10)*p;}
+function ticks(a,b,count){const s=niceStep(b-a,count),o=[];for(let v=Math.ceil(a/s-1e-9)*s;v<=b+s*1e-9;v+=s)o.push(+v.toFixed(10));return {vals:o,step:s};}
+function tickFmt(v,step){const d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return Math.abs(v)<step/1e6?'0':minus(v.toFixed(d));}
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+class Chart{
+  constructor(el,cfg){
+    this.el=el;this.cfg=cfg;this.ov={};this.uid='clip'+(Chart.n=(Chart.n||0)+1);
+    el.classList.add('chart');
+    this.leg=document.createElement('div');this.leg.className='legend';
+    this.box=document.createElement('div');this.box.className='plot';
+    this.tip=document.createElement('div');this.tip.className='tip';this.tip.hidden=true;
+    el.append(this.leg,this.box,this.tip);
+    this.lastW=0;
+    new ResizeObserver(()=>{const w=this.box.clientWidth;if(Math.abs(w-this.lastW)>1)this.draw();}).observe(this.box);
+    const mv=e=>this.hover(e);
+    this.box.addEventListener('pointermove',mv);this.box.addEventListener('pointerdown',mv);
+    this.box.addEventListener('pointerleave',()=>{this.tip.hidden=true;this.hideCross();});
+    this.draw();
+  }
+  update(cfg){Object.assign(this.cfg,cfg);this.draw();}
+  draw(){
+    const c=this.cfg, W=Math.max(240,Math.round(this.box.clientWidth||this.el.clientWidth||600)), H=c.height||300;
+    this.lastW=W;
+    const S=(c.series||[]).filter(s=>s&&s.x&&s.x.length);
+    let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+    for(const s of S){for(let i=0;i<s.x.length;i++){const X=s.x[i],Y=s.y[i];if(X<x0)x0=X;if(X>x1)x1=X;if(Y<y0)y0=Y;if(Y>y1)y1=Y;}}
+    for(const m of (c.marks||[])){y0=Math.min(y0,m.y);y1=Math.max(y1,m.y);}
+    for(const g of (c.guides||[])) if(g.type==='h'){y0=Math.min(y0,g.at);y1=Math.max(y1,g.at);}
+    const X=c.x||{},Y=c.y||{};
+    if(X.min!=null)x0=X.min; if(X.max!=null)x1=X.max;
+    if(Y.zero){y0=Math.min(0,y0);y1=Math.max(0,y1);}
+    if(!isFinite(y0)){y0=0;y1=1;}
+    const sp=(y1-y0)||1;
+    if(Y.min==null)y0-=sp*(Y.padLo??0.07); else y0=Y.min;
+    if(Y.max==null)y1+=sp*(Y.padHi??0.07); else y1=Y.max;
+    if(x1===x0)x1=x0+1;
+    const yt=ticks(y0,y1,Math.max(3,Math.floor(H/58)));
+    const yl=yt.vals.map(v=>Y.fmt?Y.fmt(v):tickFmt(v,yt.step));
+    const maxLen=Math.max(...yl.map(s=>s.length));
+    const m={l:maxLen*7+(Y.label?30:12),r:c.padR??14,t:10,b:X.label?46:28};
+    const pw=W-m.l-m.r, ph=H-m.t-m.b;
+    const xt=ticks(x0,x1,Math.max(3,Math.floor(pw/72)));
+    const sx=v=>m.l+(v-x0)/(x1-x0)*pw, sy=v=>m.t+(1-(v-y0)/(y1-y0))*ph;
+    this.sx=sx;this.sy=sy;this.m=m;this.W=W;this.H=H;
+    let g=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(c.aria||'chart')}" font-family="IBM Plex Sans, system-ui, sans-serif">`;
+    g+=`<defs><clipPath id="${this.uid}"><rect x="${m.l}" y="${m.t}" width="${pw}" height="${ph}"/></clipPath></defs>`;
+    g+=`<rect x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" style="fill:transparent"/>`;
+    yt.vals.forEach((v,i)=>{const y=sy(v).toFixed(1);g+=`<line x1="${m.l}" x2="${m.l+pw}" y1="${y}" y2="${y}" style="stroke:var(--grid);stroke-width:1"/><text x="${m.l-8}" y="${y}" dy="0.32em" text-anchor="end" font-size="11.5" style="fill:var(--muted);font-variant-numeric:tabular-nums">${yl[i]}</text>`;});
+    xt.vals.forEach(v=>{const x=sx(v).toFixed(1);g+=`<line x1="${x}" x2="${x}" y1="${m.t}" y2="${m.t+ph}" style="stroke:var(--grid);stroke-width:1"/><text x="${x}" y="${m.t+ph+17}" text-anchor="middle" font-size="11.5" style="fill:var(--muted);font-variant-numeric:tabular-nums">${X.fmt?X.fmt(v):tickFmt(v,xt.step)}</text>`;});
+    if(y0<0&&y1>0&&!Y.noZero){const y=sy(0).toFixed(1);g+=`<line x1="${m.l}" x2="${m.l+pw}" y1="${y}" y2="${y}" style="stroke:var(--axis);stroke-width:1"/>`;}
+    g+=`<line x1="${m.l}" x2="${m.l+pw}" y1="${m.t+ph}" y2="${m.t+ph}" style="stroke:var(--axis)"/><line x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${m.t+ph}" style="stroke:var(--axis)"/>`;
+    if(X.label)g+=`<text x="${m.l+pw/2}" y="${H-6}" text-anchor="middle" font-size="12.5" style="fill:var(--ink2)">${X.label}</text>`;
+    if(Y.label)g+=`<text transform="translate(13 ${m.t+ph/2}) rotate(-90)" text-anchor="middle" font-size="12.5" style="fill:var(--ink2)">${Y.label}</text>`;
+    for(const gd of (c.guides||[])){
+      if(gd.type==='v'){const x=sx(gd.at).toFixed(1);g+=`<line x1="${x}" x2="${x}" y1="${m.t}" y2="${m.t+ph}" style="stroke:var(--muted);stroke-dasharray:3 4;stroke-width:1.2"/>`;if(gd.label)g+=`<text x="${+x+5}" y="${m.t+12}" font-size="11.5" style="fill:var(--ink2)">${gd.label}</text>`;}
+      else{const y=sy(gd.at).toFixed(1);g+=`<line x1="${m.l}" x2="${m.l+pw}" y1="${y}" y2="${y}" style="stroke:var(--muted);stroke-dasharray:3 4;stroke-width:1.2"/>`;if(gd.label)g+=`<text x="${m.l+6}" y="${+y-6}" font-size="11.5" style="fill:var(--ink2)">${gd.label}</text>`;}
+    }
+    g+=`<g clip-path="url(#${this.uid})">`;
+    this.pts=[];
+    S.forEach((s,si)=>{
+      const col=s.color||'var(--s1)';
+      if(s.line!==false){
+        let d='';const st=s.x.length>2400?2:1;
+        for(let i=0;i<s.x.length;i+=st){d+=(i?'L':'M')+sx(s.x[i]).toFixed(1)+','+sy(s.y[i]).toFixed(1);}
+        g+=`<path d="${d}" style="fill:none;stroke:${col};stroke-width:${s.width||2};stroke-linejoin:round;stroke-linecap:round;${s.dash?'stroke-dasharray:'+s.dash+';':''}opacity:${s.opacity??1}"/>`;
+      }
+      if(s.dots){for(let i=0;i<s.x.length;i++)g+=`<circle cx="${sx(s.x[i]).toFixed(1)}" cy="${sy(s.y[i]).toFixed(1)}" r="${s.r||4.5}" style="fill:${col};stroke:var(--surface);stroke-width:2"/>`;}
+      if(s.hover!==false){const st=s.x.length>1200?2:1;for(let i=0;i<s.x.length;i+=st)this.pts.push([sx(s.x[i]),sy(s.y[i]),si,i]);}
+    });
+    g+=`</g>`;
+    for(const mk of (c.marks||[])){
+      const x=sx(mk.x),y=sy(mk.y);
+      g+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${mk.r||5}" style="fill:${mk.color||'var(--ink)'};stroke:var(--surface);stroke-width:2"/>`;
+      if(mk.label){const dx=mk.dx??8,dy=mk.dy??-8;g+=`<text x="${(x+dx).toFixed(1)}" y="${(y+dy).toFixed(1)}" text-anchor="${mk.anchor||'start'}" font-size="${mk.size||12}" font-weight="${mk.bold?600:500}" style="fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:3px">${mk.label}</text>`;}
+    }
+    g+=`<g class="cross"></g><g class="ov">`;
+    for(const k in this.ov){const o=this.ov[k];g+=`<circle data-k="${k}" cx="${sx(o.x).toFixed(1)}" cy="${sy(o.y).toFixed(1)}" r="${o.r||6}" style="fill:${o.color};stroke:var(--surface);stroke-width:2.5"/>`;}
+    g+=`</g></svg>`;
+    this.box.innerHTML=g;
+    this.svg=this.box.firstChild;
+    this.S=S;
+    // legend
+    const items=c.legendItems||(S.filter(s=>s.name&&s.legend!==false));
+    if(c.legend===false||items.length<2&&!c.legendItems){this.leg.innerHTML='';}
+    else this.leg.innerHTML=items.map(s=>`<span class="k"><svg width="20" height="10" aria-hidden="true">${s.dots&&s.line===false?`<circle cx="10" cy="5" r="4" style="fill:${s.color}"/>`:`<line x1="1" x2="19" y1="5" y2="5" style="stroke:${s.color};stroke-width:${Math.max(2,s.width||2)};stroke-linecap:round;${s.dash?'stroke-dasharray:'+s.dash:''}"/>`}</svg>${s.name}</span>`).join('');
+  }
+  setOverlay(k,x,y,color,r){
+    this.ov[k]={x,y,color,r};
+    const el=this.svg&&this.svg.querySelector(`circle[data-k="${k}"]`);
+    if(el){el.setAttribute('cx',this.sx(x).toFixed(1));el.setAttribute('cy',this.sy(y).toFixed(1));}
+    else this.draw();
+  }
+  hideCross(){const c=this.svg&&this.svg.querySelector('.cross');if(c)c.innerHTML='';}
+  hover(e){
+    if(!this.pts||!this.pts.length||this.cfg.hover===false)return;
+    const r=this.svg.getBoundingClientRect(), px=(e.clientX-r.left)*(this.W/r.width), py=(e.clientY-r.top)*(this.H/r.height);
+    let best=null,bd=Infinity;
+    for(const p of this.pts){const d=(p[0]-px)**2+(p[1]-py)**2;if(d<bd){bd=d;best=p;}}
+    if(!best||bd>45*45){this.tip.hidden=true;this.hideCross();return;}
+    const s=this.S[best[2]], i=best[3], c=this.cfg;
+    const html=c.tip?c.tip(s,i):`<b>${s.name||''}</b>${(c.x.tipName||'x')} = ${(c.x.tipFmt||(v=>v.toFixed(3)))(s.x[i])}<br>${(c.y.tipName||'y')} = ${(c.y.tipFmt||(v=>v.toFixed(2)))(s.y[i])}`;
+    this.tip.innerHTML=html;this.tip.hidden=false;
+    const cross=this.svg.querySelector('.cross');
+    cross.innerHTML=`<line x1="${best[0].toFixed(1)}" x2="${best[0].toFixed(1)}" y1="${this.m.t}" y2="${this.H-this.m.b}" style="stroke:var(--axis);stroke-width:1"/><circle cx="${best[0].toFixed(1)}" cy="${best[1].toFixed(1)}" r="5" style="fill:${s.color||'var(--s1)'};stroke:var(--surface);stroke-width:2"/>`;
+    const scale=r.width/this.W, ox=this.box.offsetLeft, oy=this.box.offsetTop;
+    let tx=ox+best[0]*scale+12, ty=oy+best[1]*scale-12-this.tip.offsetHeight;
+    const maxX=this.el.clientWidth-this.tip.offsetWidth-4;
+    if(tx>maxX)tx=ox+best[0]*scale-12-this.tip.offsetWidth;
+    if(tx<0)tx=4; if(ty<0)ty=oy+best[1]*scale+14;
+    this.tip.style.left=tx+'px';this.tip.style.top=ty+'px';
+  }
+}
+const cvTip=(unit='µA')=>(s,i)=>`<b>${s.name||''}</b>E = ${fV(s.x[i])}<br>i = ${minus(s.y[i].toFixed(Math.abs(s.y[i])<10?2:1))} ${unit}`;
+const EAX={label:'E vs Ag/AgCl (V)'};
+const IAX={label:'Current (µA)'};
+
+function seg(el,opts,val,on){
+  el.innerHTML='';const bs=[];
+  opts.forEach(([v,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed',String(v===val));b.onclick=()=>{bs.forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');on(v);};bs.push(b);el.append(b);});
+}
+const $=id=>document.getElementById(id);
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------------- compounds ---------------- */
+const CMP={
+  fc:{name:'Ferrocene',couple:'Fc⁺/Fc · Fe(C₅H₅)₂',kind:'Reversible',color:'var(--s1)',
+      p:{E0:0.43,k0:1,D:2.4e-5,C:1,Ei:0.0,Es:0.8,start:'R'},
+      cond:'1 mM in acetonitrile, 0.1 M TBAPF₆, glassy carbon',
+      text:'The textbook reversible couple and the IUPAC-recommended internal reference for non-aqueous work. Fast electron transfer (k° ≈ 1 cm s⁻¹) and a stable cation give two mirror-image peaks about 59 mV apart.',
+      kinds:'k° ≈ 1 cm s⁻¹ · D = 2.4 × 10⁻⁵ cm² s⁻¹'},
+  fe:{name:'Potassium ferricyanide',couple:'[Fe(CN)₆]³⁻/⁴⁻',kind:'Quasi-reversible',color:'var(--s2)',
+      p:{E0:0.23,k0:0.01,D:7.0e-6,C:2,Ei:0.6,Es:-0.1,start:'O'},
+      cond:'2 mM in 1 M KCl, glassy carbon',
+      text:'The most common teaching-lab couple. Electron transfer at carbon is only moderately fast (here k° = 0.01 cm s⁻¹) and very sensitive to surface cleanliness, so ΔEp is larger than 59 mV and grows with scan rate. The scan starts by reducing ferricyanide.',
+      kinds:'k° ≈ 0.01 cm s⁻¹ · D = 7.0 × 10⁻⁶ cm² s⁻¹'},
+  aa:{name:'Ascorbic acid',couple:'Dehydroascorbic acid / ascorbate',kind:'Irreversible',color:'var(--s3)',
+      p:{E0:-0.14,k0:1.4e-6,alpha:0.75,n:2,D:5.8e-6,C:1,Ei:-0.2,Es:0.7,start:'R'},
+      cond:'1 mM in pH 7 phosphate buffer, glassy carbon',
+      text:'Vitamin C is oxidized in a 2e⁻/2H⁺ step with very slow electron transfer at bare carbon: the peak appears about 0.44 V past E°′ and is broad. No return peak is seen; in real solutions the product, dehydroascorbic acid, is also quickly hydrated.',
+      kinds:'k° ≈ 10⁻⁶ cm s⁻¹ · αn ≈ 0.5 · D = 5.8 × 10⁻⁶ cm² s⁻¹'}
+};
+function cvSeries(key,v=0.1,extra={}){const c=CMP[key];const s=sim({...c.p,v,...extra});return {s,a:analyze(s)};}
+
+/* ---------------- hero ---------------- */
+const FC=sim({...CMP.fc.p,v:0.1,snapEvery:10});
+const FCa=analyze(FC);
+(function hero(){
+  const t=arr(FC.E).map((_,k)=>k*FC.dt);
+  const wave=new Chart($('heroWave'),{height:280,x:{label:'Time (s)',tipName:'t',tipFmt:v=>v.toFixed(1)+' s'},y:{label:'E vs Ag/AgCl (V)',tipName:'E',tipFmt:fV},
+    series:[{name:'Applied potential',x:t,y:arr(FC.E),color:'var(--ink2)'}],
+    marks:[{x:0,y:0,label:'Eᵢ',dx:8,dy:-6,color:'var(--ink2)'},{x:t[FC.nHalf],y:0.8,label:'E_λ (switch)',anchor:'middle',dx:0,dy:16,color:'var(--ink2)'}].map(mm=>({...mm,label:mm.label.replace('E_λ','Eλ')})),
+    aria:'Triangular potential waveform from 0 to 0.8 V and back over 16 seconds'});
+  const cv=new Chart($('heroCV'),{height:280,x:{...EAX},y:{...IAX},series:[{name:'Ferrocene',x:arr(FC.E),y:arr(FC.I),color:'var(--s1)'}],tip:cvTip(),
+    marks:[{x:FCa.Epf,y:FCa.ipf,label:'anodic peak (Fc → Fc⁺)',dx:10,dy:2},{x:FCa.Epr,y:FCa.ipr,label:'cathodic peak (Fc⁺ → Fc)',dx:10,dy:14}],
+    aria:'Cyclic voltammogram of ferrocene with anodic peak near 0.46 V and cathodic peak near 0.40 V'});
+  let k=0, playing=!reduced, last=0;
+  const N=FC.E.length;
+  function place(){wave.setOverlay('d',t[k],FC.E[k],'var(--s2)');cv.setOverlay('d',FC.E[k],FC.I[k],'var(--s2)');}
+  if(reduced){k=FCa.fi;}
+  place();
+  function loop(ts){if(playing){if(ts-last>33){k=(k+16)%N;place();last=ts;}requestAnimationFrame(loop);}}
+  const btn=$('heroPlay');
+  btn.textContent=playing?'Pause':'Play';
+  btn.onclick=()=>{playing=!playing;btn.textContent=playing?'Pause':'Play';if(playing)requestAnimationFrame(loop);};
+  if(playing)requestAnimationFrame(loop);
+})();
+
+/* ---------------- Nernst explorer ---------------- */
+(function nernst(){
+  let n=1;
+  const xs=[];for(let e=-0.25;e<=0.2501;e+=0.002)xs.push(+e.toFixed(3));
+  const fr=nn=>xs.map(e=>1/(1+Math.exp(-nn*f*e)));
+  const ch=new Chart($('nernstChart'),{height:300,x:{label:'E − E°′ (V)',min:-0.25,max:0.25,tipName:'E − E°′',tipFmt:v=>fmVs(v)},y:{label:'Fraction of surface species as O',min:0,max:1,tipName:'fraction O',tipFmt:v=>(v*100).toFixed(1)+'%'},
+    series:[],aria:'Sigmoidal Nernst curve of fraction oxidized versus potential'});
+  function render(){
+    const e=+$('nE').value/1000;
+    const other=n===1?2:1;
+    ch.update({series:[
+      {name:`n = ${other}`,x:xs,y:fr(other),color:'var(--ref)',width:1.6},
+      {name:`n = ${n}`,x:xs,y:fr(n),color:'var(--s2)',width:2.5}
+    ],guides:[{type:'v',at:0,label:'E°′'}]});
+    const frac=1/(1+Math.exp(-n*f*e));
+    ch.setOverlay('p',e,frac,'var(--s2)');
+    $('nEo').textContent=fmVs(e);
+    const ratio=Math.exp(n*f*e);
+    $('nRatio').textContent=sci(ratio);
+    $('nFrac').textContent=(frac*100).toFixed(1)+' %';
+    $('nG').textContent=minus((-n*FARADAY*e/1000).toFixed(2))+' kJ mol⁻¹';
+    const o=$('nComp').children[0], r=$('nComp').children[1];
+    o.style.flex=`0 0 calc(${(frac*100).toFixed(2)}% - 1px)`; r.style.flex=`1 1 0`;
+    o.textContent=frac>0.12?`O ${(frac*100).toFixed(0)}%`:'';
+    r.textContent=frac<0.88?`R ${((1-frac)*100).toFixed(0)}%`:'';
+  }
+  seg($('nN'),[[1,'n = 1'],[2,'n = 2']],1,v=>{n=v;render();});
+  $('nE').addEventListener('input',render);
+  render();
+})();
+
+/* ---------------- concentration profile explorer ---------------- */
+(function profiles(){
+  const snaps=FC.snaps, dxum=FC.dx*1e4, nmax=Math.min(FC.N,Math.ceil(260/dxum)+1);
+  const xs=[];for(let i=0;i<nmax;i++)xs.push(i*dxum);
+  const cv=new Chart($('profCV'),{height:270,x:{...EAX},y:{...IAX},series:[{name:'Ferrocene, 100 mV/s',x:arr(FC.E),y:arr(FC.I),color:'var(--s1)'}],tip:cvTip(),aria:'Ferrocene CV with current position marker'});
+  const pr=new Chart($('profChart'),{height:270,x:{label:'Distance from electrode (µm)',min:0,max:260,tipName:'x',tipFmt:v=>v.toFixed(0)+' µm'},y:{label:'C / C*bulk',min:0,max:1.08,tipName:'C/C*',tipFmt:v=>v.toFixed(3)},series:[],aria:'Concentration profiles of ferrocene and ferrocenium'});
+  const sl=$('pT');sl.max=snaps.length-1;
+  function stage(sn){
+    const fwd=sn.k<=FC.nHalf, E=sn.E, E0=0.43;
+    if(fwd){
+      if(E<E0-0.12)return ['Before the wave','The potential is still too negative to oxidize ferrocene. The surface concentration equals the bulk value and essentially no faradaic current flows.'];
+      if(E<FCa.Epf-0.006)return ['Rising current','Each millivolt more positive raises [Fc⁺]/[Fc] at the surface, as Nernst requires. Fc is used up at the surface, the profile steepens and the current climbs.'];
+      if(E<=FCa.Epf+0.012)return ['Anodic peak','Surface Fc has fallen to about a quarter of bulk. From here, a more positive potential cannot steepen the gradient much, while the depleted zone keeps spreading into solution.'];
+      return ['Diffusion-limited tail','The surface is practically free of Fc. The depletion layer grows roughly as √t, so the gradient and the current decay.'];
+    }
+    if(E>E0+0.06)return ['After the switch','The potential is still positive enough to keep oxidizing, so the current stays anodic but keeps falling. A cloud of Fc⁺ has built up next to the electrode.'];
+    if(sn.i>0)return ['Current heads toward zero','As E approaches E°′ again, Nernst lets Fc⁺ return toward Fc at the surface. Oxidation slows, and the net current drops toward zero.'];
+    if(E>FCa.Epr+0.012)return ['Cathodic current rising','The potential is now negative enough to reduce the Fc⁺ that accumulated near the surface back to Fc. The current has changed sign and is growing.'];
+    if(E>FCa.Epr-0.012)return ['Cathodic peak','The Fc⁺ right at the surface is mostly reduced. As with the forward peak, depletion then starts to outrun the potential change.'];
+    return ['End of the cycle','Most of the Fc⁺ near the surface has been reduced. What is left has diffused out into the solution, so the cathodic current tails off.'];
+  }
+  function render(){
+    const sn=snaps[+sl.value];
+    pr.update({series:[
+      {name:'Fc (reduced)',x:xs,y:arr(sn.R.subarray(0,nmax)),color:'var(--s1)',width:2.5},
+      {name:'Fc⁺ (oxidized)',x:xs,y:arr(sn.O.subarray(0,nmax)),color:'var(--s2)',width:2.5}
+    ]});
+    cv.setOverlay('p',sn.E,sn.i,'var(--s2)');
+    $('pTo').textContent=sn.t.toFixed(1)+' s';
+    $('pE').textContent=fV(sn.E);
+    const r0=sn.O[0]/Math.max(sn.R[0],1e-12);
+    $('pRat').textContent=sci(r0);
+    $('pNer').textContent=sci(Math.exp(f*(sn.E-0.43)));
+    const [h,t]=stage(sn);$('pStage').innerHTML=`<b>${h}</b>${t}`;
+  }
+  sl.addEventListener('input',render);
+  let timer=null;
+  $('pPlay').onclick=()=>{
+    if(timer){clearInterval(timer);timer=null;$('pPlay').textContent='Play scan';return;}
+    if(+sl.value>=snaps.length-1)sl.value=0;
+    $('pPlay').textContent='Pause';
+    timer=setInterval(()=>{const v=+sl.value+1;if(v>=snaps.length){clearInterval(timer);timer=null;$('pPlay').textContent='Play scan';return;}sl.value=v;render();},reduced?300:110);
+  };
+  render();
+})();
+
+/* ---------------- compound cards ---------------- */
+(function cards(){
+  const host=$('cards');
+  for(const key of ['fc','fe','aa']){
+    const c=CMP[key], {s,a}=cvSeries(key);
+    const div=document.createElement('article');div.className='card';
+    const nm=c.p.n||1;
+    const rows=a.hasReturn?
+      `<dt>E<sub>pa</sub></dt><dd>${fV(s.dir>0?a.Epf:a.Epr)}</dd><dt>E<sub>pc</sub></dt><dd>${fV(s.dir>0?a.Epr:a.Epf)}</dd><dt>ΔE<sub>p</sub></dt><dd>${fmV(a.dEp)}</dd><dt>E<sub>½</sub></dt><dd>${fV(a.Ehalf)}</dd><dt>|i<sub>p,ret</sub>/i<sub>p,fwd</sub>|</dt><dd>${a.ratio.toFixed(2)}</dd>`:
+      `<dt>E<sub>pa</sub></dt><dd>${fV(a.Epf)}</dd><dt>E<sub>pa</sub> − E°′</dt><dd>${fmV(a.Epf-c.p.E0)}</dd><dt>Return peak</dt><dd>none</dd><dt>i<sub>pa</sub></dt><dd>${fuA(a.ipf)}</dd>`;
+    div.innerHTML=`<div class="row" style="justify-content:space-between"><span class="chip"><i style="background:${c.color}"></i>${c.kind}</span></div>
+      <div><h3>${c.name}</h3><div class="formula">${c.couple}</div></div>
+      <div class="chart-host"></div>
+      <p>${c.text}</p>
+      <dl class="ro">${rows}</dl>
+      <p class="cap">${c.cond}, 100 mV s⁻¹. ${c.kinds}.</p>`;
+    host.append(div);
+    const marks=[{x:a.Epf,y:a.ipf,label:s.dir>0?'Epa':'Epc',dx:8,dy:s.dir>0?-4:14}];
+    if(a.hasReturn)marks.push({x:a.Epr,y:a.ipr,label:s.dir>0?'Epc':'Epa',dx:8,dy:s.dir>0?14:-4});
+    new Chart(div.querySelector('.chart-host'),{height:230,x:{...EAX},y:{...IAX},series:[{name:c.name,x:arr(s.E),y:arr(s.I),color:c.color}],marks:marks.map(mm=>({...mm,color:'var(--ink2)',r:4,label:mm.label.replace('Ep','E<tspan baseline-shift="sub" font-size="9">p')+'</tspan>'})),tip:cvTip(),aria:`Simulated CV of ${c.name}`});
+  }
+})();
+
+/* ---------------- k0 explorer ---------------- */
+(function kExplorer(){
+  const base={E0:0,D:1e-5,C:1,Ei:-0.7,Es:0.7,start:'R',v:0.1};
+  const ref=sim({...base,k0:10});
+  const ch=new Chart($('kChart'),{height:360,x:{label:'E − E°′ (V)',tipName:'E − E°′',tipFmt:fV},y:{...IAX},series:[],tip:(s,i)=>`<b>${s.name}</b>E − E°′ = ${fV(s.x[i])}<br>i = ${minus(s.y[i].toFixed(2))} µA`,aria:'CV as a function of the standard rate constant'});
+  let raf=0;
+  function render(){
+    const lk=+$('kK').value, al=+$('kA').value, k0=Math.pow(10,lk);
+    const s=sim({...base,k0,alpha:al}), a=analyze(s);
+    const L=k0/Math.sqrt(base.D*f*base.v), lim=Math.pow(10,-2*(1+al));
+    const zone=L>=15?['Reversible','var(--s1)']:L>lim?['Quasi-reversible','var(--s2)']:['Irreversible','var(--s3)'];
+    ch.update({series:[
+      {name:'Reversible limit',x:arr(ref.E),y:arr(ref.I),color:'var(--ref)',width:1.6,dash:'5 4',hover:false},
+      {name:`k° = ${sci(k0)} cm/s`,x:arr(s.E),y:arr(s.I),color:'var(--accent)',width:2.5}
+    ]});
+    $('kKo').textContent=minus(lk.toFixed(1));
+    $('kAo').textContent=al.toFixed(2);
+    $('kZone').innerHTML=`<i style="background:${zone[1]}"></i>${zone[0]}`;
+    $('kL').textContent=sci(L);
+    $('kEpa').textContent=fmVs(a.Epf);
+    $('kEpc').textContent=a.hasReturn?fmVs(a.Epr):'outside window';
+    $('kdE').textContent=a.hasReturn?fmV(a.dEp):'–';
+    $('kip').textContent=fuA(a.ipf);
+  }
+  const go=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(render);};
+  $('kK').addEventListener('input',go);$('kA').addEventListener('input',go);
+  render();
+})();
+
+/* ---------------- concentration explorer ---------------- */
+(function concExplorer(){
+  const STD=[0.5,1,2,3,4,5];
+  let key='fe';
+  const cv=new Chart($('cCV'),{height:300,x:{...EAX},y:{...IAX},series:[],tip:cvTip(),aria:'CVs at several concentrations'});
+  const cal=new Chart($('cCal'),{height:300,x:{label:'Concentration (mM)',min:0,max:6.2,tipName:'C',tipFmt:v=>v.toFixed(2)+' mM'},y:{label:'|Forward peak current| (µA)',min:0,tipName:'|ip|',tipFmt:v=>v.toFixed(1)+' µA'},series:[],aria:'Calibration line of peak current versus concentration'});
+  function render(){
+    const c=CMP[key], s1=sim({...c.p,C:1,v:0.1}), a1=analyze(s1), Cs=+$('cC').value;
+    const slope=Math.abs(a1.ipf);
+    const E=arr(s1.E);
+    const series=STD.map((C,i)=>({name:i===0?'Standards, 0.5–5 mM':'',legend:i===0,x:E,y:scaled(s1,C),color:`var(--q${i+1})`,width:1.6,
+      _C:C}));
+    series.forEach(sr=>sr.name=sr.name||`${sr._C} mM standard`);
+    const items=[{name:'Standards 0.5 → 5 mM',color:'var(--q4)'},{name:`Sample, ${Cs.toFixed(2)} mM`,color:'var(--s2)',width:2.5}];
+    series.push({name:`Sample, ${Cs.toFixed(2)} mM`,x:E,y:scaled(s1,Cs),color:'var(--s2)',width:2.6});
+    cv.update({series,legendItems:items,tip:(s,i)=>`<b>${s.name.replace('Standards, 0.5–5 mM','0.5 mM standard')}</b>E = ${fV(s.x[i])}<br>i = ${minus(s.y[i].toFixed(1))} µA`});
+    const ymax=slope*6.2*1.05;
+    cal.update({y:{label:'|Forward peak current| (µA)',min:0,max:ymax,tipName:'|ip|',tipFmt:v=>v.toFixed(1)+' µA'},series:[
+      {name:'Fit',x:[0,6.2],y:[0,slope*6.2],color:'var(--ref)',width:1.6,hover:false,legend:false},
+      {name:'Standards',x:STD,y:STD.map(C=>slope*C),color:'var(--q4)',line:false,dots:true},
+      {name:'Sample',x:[Cs],y:[slope*Cs],color:'var(--s2)',line:false,dots:true,r:6}
+    ]});
+    $('cCo').textContent=Cs.toFixed(2)+' mM';
+    $('cIp').textContent=fuA(Math.abs(a1.ipf*Cs));
+    const n=c.p.n||1, D=c.p.D;
+    let pred, lab;
+    if(key==='aa'){const an=(1-(c.p.alpha??0.5))*n;pred=2.99e5*n*Math.sqrt(an)*AREA*Math.sqrt(D)*Cs*1e-6*Math.sqrt(0.1)*1e6;lab='Irreversible eq.';}
+    else{pred=2.69e5*Math.pow(n,1.5)*AREA*Math.sqrt(D)*Cs*1e-6*Math.sqrt(0.1)*1e6;lab='Randles–Sevcik';}
+    $('cEqLab').textContent=lab;
+    $('cRS').textContent=fuA(pred);
+    $('cSl').textContent=slope.toFixed(2)+' µA/mM';
+    $('cEp').textContent=fV(a1.Epf);
+    $('cNote').textContent=key==='fe'?`Quasi-reversible: the simulated peak is ${(100*(1-slope/ (pred/Cs))).toFixed(0)}% below the reversible Randles–Sevcik value, but it is still exactly proportional to C, so the calibration works.`:
+      key==='aa'?'For the irreversible wave the 2.99 × 10⁵ n(αn)½ form applies, with αn = 0.5. Proportionality to C is unchanged.':
+      'Reversible: the simulation matches Randles–Sevcik to within about 0.5%.';
+  }
+  seg($('cCmp'),[['fc','Ferrocene'],['fe','Ferricyanide'],['aa','Ascorbic acid']],key,v=>{key=v;render();});
+  $('cC').addEventListener('input',render);
+  render();
+})();
+
+/* ---------------- scan-rate explorer ---------------- */
+(function rateExplorer(){
+  const VS=[0.025,0.05,0.1,0.2,0.4,0.8];
+  let key='fe', norm=false;
+  const cv=new Chart($('rCV'),{height:340,x:{...EAX},y:{...IAX},series:[],aria:'CVs at six scan rates'});
+  const ip=new Chart($('rIp'),{height:260,x:{label:'√v  (V½ s⁻½)',min:0,max:0.95,tipName:'√v',tipFmt:v=>v.toFixed(3)},y:{label:'|Peak current| (µA)',min:0,tipName:'|ip|',tipFmt:v=>v.toFixed(1)+' µA'},series:[],aria:'Peak current against square root of scan rate'});
+  const ep=new Chart($('rEp'),{height:260,x:{label:'log₁₀ v  (v in V/s)',min:-1.7,max:0,tipName:'log v',tipFmt:v=>minus(v.toFixed(2))},y:{label:'Peak potential (V)',tipName:'Ep',tipFmt:fV},series:[],aria:'Peak potential against log scan rate'});
+  function render(){
+    const c=CMP[key];
+    const runs=VS.map(v=>{const s=sim({...c.p,v});return {v,s,a:analyze(s)};});
+    const unit=norm?'µA/(V/s)½':'µA';
+    cv.update({y:{label:norm?'Current ÷ √v  (µA V⁻½ s½)':'Current (µA)'},
+      series:runs.map((r,i)=>({name:`${Math.round(r.v*1000)} mV/s`,x:arr(r.s.E),y:norm?scaled(r.s,1/Math.sqrt(r.v)):arr(r.s.I),color:`var(--q${i+1})`,width:i===2?2.2:1.8})),
+      tip:(s,i)=>`<b>${s.name}</b>E = ${fV(s.x[i])}<br>i${norm?'/√v':''} = ${minus(s.y[i].toFixed(1))} ${unit}`});
+    $('rTitle').textContent=`${c.name}: CVs at six scan rates${norm?', current divided by √v':''}`;
+    const sq=runs.map(r=>Math.sqrt(r.v));
+    const fwd=runs.map(r=>Math.abs(r.a.ipf));
+    const slope=sq.reduce((s,x,i)=>s+x*fwd[i],0)/sq.reduce((s,x)=>s+x*x,0);
+    const ser=[{name:'Fit through origin',x:[0,0.95],y:[0,slope*0.95],color:'var(--ref)',width:1.5,hover:false,legend:false},
+      {name:`Forward peak (${runs[0].s.dir>0?'anodic':'cathodic'})`,x:sq,y:fwd,color:c.color,line:false,dots:true}];
+    const hasRet=runs.every(r=>r.a.hasReturn);
+    if(hasRet)ser.splice(1,0,{name:'Return peak (baseline-corrected)',x:sq,y:runs.map(r=>r.a.iprCorr),color:'var(--ref)',line:false,dots:true,r:7.5});
+    ip.update({series:ser,y:{label:'|Peak current| (µA)',min:0,max:Math.max(...fwd)*1.15,tipName:'|ip|',tipFmt:v=>v.toFixed(1)+' µA'}});
+    const lv=runs.map(r=>Math.log10(r.v));
+    const es=[{name:'Forward peak',x:lv,y:runs.map(r=>r.a.Epf),color:c.color,width:1.5,dots:true}];
+    if(hasRet)es.push({name:'Return peak',x:lv,y:runs.map(r=>r.a.Epr),color:'var(--ink2)',width:1.5,dots:true,r:3.5});
+    const allE=es.flatMap(s=>s.y), mid=(Math.max(...allE)+Math.min(...allE))/2, half=Math.max(0.06,(Math.max(...allE)-Math.min(...allE))/2*1.25);
+    ep.update({series:es,y:{label:'Peak potential (V)',min:mid-half,max:mid+half,tipName:'Ep',tipFmt:fV}});
+    // table
+    const pa=r=>r.s.dir>0?r.a.Epf:r.a.Epr, pc=r=>r.s.dir>0?r.a.Epr:r.a.Epf;
+    let h=`<thead><tr><th class="num">v (mV/s)</th><th class="num">E<sub>pa</sub> (V)</th><th class="num">E<sub>pc</sub> (V)</th><th class="num">ΔE<sub>p</sub> (mV)</th><th class="num">|i<sub>p,fwd</sub>| (µA)</th><th class="num">|i<sub>p,fwd</sub>|/√v</th></tr></thead><tbody>`;
+    for(const r of runs){
+      const ret=r.a.hasReturn;
+      h+=`<tr><td class="num">${Math.round(r.v*1000)}</td><td class="num">${ret||r.s.dir>0?minus(pa(r).toFixed(3)):'–'}</td><td class="num">${ret||r.s.dir<0?minus(pc(r).toFixed(3)):'–'}</td><td class="num">${ret?Math.round(r.a.dEp*1000):'–'}</td><td class="num">${Math.abs(r.a.ipf).toFixed(1)}</td><td class="num">${(Math.abs(r.a.ipf)/Math.sqrt(r.v)).toFixed(1)}</td></tr>`;
+    }
+    $('rTbl').innerHTML=h+'</tbody>';
+    let note;
+    if(key==='fc')note='Reversible: peak potentials do not move and ΔEp stays at 59 mV. Divide the current by √v and the six curves collapse onto one, which is the signature of diffusion control.';
+    else if(key==='fe')note='Quasi-reversible: ΔEp grows from about 70 mV to over 100 mV as v increases, because Λ falls as v rises. The normalized peaks shrink slightly at high v for the same reason.';
+    else{const sl=(runs[5].a.Epf-runs[0].a.Epf)/(Math.log10(0.8/0.025));note=`Irreversible: the oxidation peak moves positive by ${Math.round(sl*1000)} mV per decade of scan rate. From 29.6/(αn) mV per decade, αn ≈ ${(0.0296/sl).toFixed(2)}. There is no return peak at any scan rate.`;}
+    $('rNote').textContent=note;
+  }
+  seg($('rCmp'),[['fc','Ferrocene'],['fe','Ferricyanide'],['aa','Ascorbic acid']],key,v=>{key=v;render();});
+  seg($('rNorm'),[[false,'Current'],[true,'Current ÷ √v']],false,v=>{norm=v;render();});
+  render();
+})();
+
+/* ---------------- quiz ---------------- */
+const QUIZ=[
+  {q:'This voltammogram of a one-electron couple was recorded at 100 mV s⁻¹, starting at +0.55 V and scanning negative. What is the formal potential E°′ of the couple?',
+   build(el){const s=sim({E0:0.25,k0:1,D:1e-5,C:1,Ei:0.55,Es:-0.05,start:'O',v:0.1}),a=analyze(s);
+     new Chart(el,{height:290,x:{...EAX},y:{...IAX},series:[{name:'Compound X',x:arr(s.E),y:arr(s.I),color:'var(--s1)'}],marks:[{x:a.Epf,y:a.ipf,label:'cathodic peak',dx:-8,dy:16,anchor:'end',r:4},{x:a.Epr,y:a.ipr,label:'anodic peak',dx:8,dy:-6,r:4}],tip:cvTip()});},
+   opts:['+0.22 V','+0.25 V','+0.28 V','+0.06 V'],ans:1,
+   why:'The peaks sit at about +0.22 V (cathodic) and +0.28 V (anodic). For a reversible couple E°′ ≈ E½ = (E<sub>pa</sub> + E<sub>pc</sub>)/2 = <b>+0.25 V</b>. The 59 mV separation confirms a reversible one-electron process, so the midpoint is a fair estimate of E°′. +0.06 V is ΔEp, not a potential on the scale.'},
+  {q:'The same one-electron couple was measured on three differently prepared electrodes. Which trace shows <b>irreversible</b> electron transfer?',
+   build(el){const b={E0:0,D:1e-5,C:1,Ei:-0.7,Es:0.7,start:'R',v:0.1};const A=sim({...b,k0:Math.pow(10,-2.5)}),B=sim({...b,k0:1e-6}),C=sim({...b,k0:1});
+     new Chart(el,{height:300,x:{label:'E − E°′ (V)'},y:{...IAX},series:[{name:'Trace A',x:arr(A.E),y:arr(A.I),color:'var(--s1)'},{name:'Trace B',x:arr(B.E),y:arr(B.I),color:'var(--s2)'},{name:'Trace C',x:arr(C.E),y:arr(C.I),color:'var(--s3)'}],tip:cvTip()});},
+   opts:['Trace A','Trace B','Trace C','None of them: all three are reversible'],ans:1,
+   why:'<b>Trace B</b> has broad, low peaks shifted nearly 0.5 V either side of E°′, which means a very small k° (here 10⁻⁶ cm s⁻¹). Trace C, with two sharp peaks 59 mV apart, is reversible. Trace A is in between: about 135 mV separation, so quasi-reversible. All three describe the same thermodynamics (same E°′); only the kinetics differ.'},
+  {q:'For this couple ΔE<sub>p</sub> stays the same at every scan rate tested, and the peaks are labeled with their potentials. How many electrons are transferred?',
+   build(el){const s=sim({E0:0.05,k0:1,n:2,D:8e-6,C:1,Ei:-0.25,Es:0.35,start:'R',v:0.1}),a=analyze(s);
+     new Chart(el,{height:290,x:{...EAX},y:{...IAX},series:[{name:'Compound Z',x:arr(s.E),y:arr(s.I),color:'var(--s1)'}],marks:[{x:a.Epf,y:a.ipf,label:'Epa = '+fV(a.Epf),dx:10,dy:2,r:4},{x:a.Epr,y:a.ipr,label:'Epc = '+fV(a.Epr),dx:-10,dy:4,anchor:'end',r:4}],tip:cvTip()});},
+   opts:['n = 1','n = 2','n = 3','Cannot be determined from a CV'],ans:1,
+   why:'ΔE<sub>p</sub> = 0.065 − 0.035 = 30 mV. Since ΔE<sub>p</sub> does not change with scan rate, the couple is reversible, and for a reversible couple ΔE<sub>p</sub> ≈ 59/n mV. 59/30 ≈ 2, so <b>n = 2</b>. Notice also how sharp the peaks are: the width |E<sub>p</sub> − E<sub>p/2</sub>| shrinks to 28 mV for n = 2.'},
+  {q:'Points A–D lie on the forward (oxidation) sweep of the ferrocene CV. At which point are the surface concentrations of Fc and Fc⁺ equal?',
+   build(el){const s=FC,a=FCa;const near=E=>{let b=1;for(let k=1;k<=s.nHalf;k++)if(Math.abs(s.E[k]-E)<Math.abs(s.E[b]-E))b=k;return b;};
+     const pts=[[0.32,'A'],[0.43,'B'],[a.Epf,'C'],[0.70,'D']].map(([E,l])=>{const k=near(E);return {x:s.E[k],y:s.I[k],label:l,bold:true,size:13,dx:l==='B'?-10:8,dy:l==='C'?-8:l==='B'?-4:-8,anchor:l==='B'?'end':'start',color:'var(--s2)'};});
+     new Chart(el,{height:290,x:{...EAX},y:{...IAX},series:[{name:'Ferrocene',x:arr(s.E),y:arr(s.I),color:'var(--s1)'}],marks:pts,tip:cvTip()});},
+   opts:['Point A','Point B','Point C (the peak)','Point D'],ans:1,
+   why:'By the Nernst equation, [Fc⁺]/[Fc] = 1 when E = E°′ ≈ E½ = +0.43 V, which is <b>point B</b>, on the rising part of the wave. At the peak (C, about 28 mV more positive) the surface ratio is already about 3 : 1. At A almost everything at the surface is still Fc; at D the surface is almost pure Fc⁺. You can check this in the concentration-profile explorer in section 02.'},
+  {q:'A student builds a calibration line from ferricyanide standards (|i<sub>pc</sub>| at 100 mV s⁻¹). An unknown gives the current shown by the dashed line. What is its concentration?',
+   build(el){const s=sim({...CMP.fe.p,C:1,v:0.1}),sl=Math.abs(analyze(s).ipf);const C=[1,2,3,4,5],noise=[1.008,0.989,1.005,0.994,1.009];const u=2.6*sl;
+     new Chart(el,{height:290,x:{label:'Ferricyanide (mM)',min:0,max:5.5,tipName:'C',tipFmt:v=>v.toFixed(2)+' mM'},y:{label:'|ipc| (µA)',min:0,max:sl*5.8,tipName:'|ipc|',tipFmt:v=>v.toFixed(1)+' µA'},guides:[{type:'h',at:u,label:'Unknown: '+u.toFixed(1)+' µA'}],series:[{name:'Least-squares line',x:[0,5.5],y:[0,sl*5.5],color:'var(--ref)',width:1.6,hover:false},{name:'Standards',x:C,y:C.map((c,i)=>c*sl*noise[i]),color:'var(--s2)',line:false,dots:true}]});},
+   opts:['1.3 mM','2.6 mM','3.4 mM','5.2 mM'],ans:1,
+   why:'The slope of the line is about 15 µA per mM (the 2 mM standard gives about 30 µA). The unknown’s 39 µA divided by 15 µA/mM gives <b>2.6 mM</b>. This works because the Randles–Sevcik equation makes i<sub>p</sub> directly proportional to C when n, A, D and v are held constant.'},
+  {q:'Ferrocene was scanned at five scan rates. As v rises the peaks grow, but their potentials do not move. What does this tell you?',
+   build(el){const vs=[0.025,0.05,0.1,0.2,0.4];
+     new Chart(el,{height:300,x:{...EAX},y:{...IAX},series:vs.map((v,i)=>{const s=sim({...CMP.fc.p,v});return {name:Math.round(v*1000)+' mV/s',x:arr(s.E),y:arr(s.I),color:`var(--q${i+2})`,width:1.8};}),tip:cvTip()});},
+   opts:['Electron transfer is fast compared with diffusion: the couple is reversible','Electron transfer is slow: the couple is irreversible','Ferrocene is adsorbed on the electrode','The concentration of ferrocene increases at faster scan rates'],ans:0,
+   why:'Constant peak potentials and a constant ΔE<sub>p</sub> of about 59 mV at every scan rate are the hallmark of a <b>reversible</b> couple: even at the fastest scan, Λ stays above 15, so the surface remains at Nernstian equilibrium. The peaks grow only because a faster scan gives a thinner diffusion layer and a steeper gradient. A slow couple would show peaks drifting apart.'},
+  {q:'A student plots the forward peak current against the square root of scan rate and gets this result. What is the best conclusion?',
+   build(el){const vs=[0.025,0.05,0.1,0.2,0.4,0.8];const sq=vs.map(Math.sqrt),ip=vs.map(v=>analyze(sim({...CMP.fc.p,v})).ipf);const sl=sq.reduce((s,x,i)=>s+x*ip[i],0)/sq.reduce((s,x)=>s+x*x,0);
+     new Chart(el,{height:290,x:{label:'√v  (V½ s⁻½)',min:0,max:0.95,tipName:'√v',tipFmt:v=>v.toFixed(3)},y:{label:'ipa (µA)',min:0,max:sl*1.0,tipName:'ipa',tipFmt:v=>v.toFixed(1)+' µA'},series:[{name:'Fit',x:[0,0.95],y:[0,sl*0.95],color:'var(--ref)',width:1.6,hover:false},{name:'Measured peaks',x:sq,y:ip,color:'var(--s1)',line:false,dots:true}]});},
+   opts:['The analyte diffuses freely to the electrode (diffusion-controlled current)','The analyte is adsorbed on the electrode surface','The electron transfer must be irreversible','The solution was being stirred during the scan'],ans:0,
+   why:'A straight line through the origin of i<sub>p</sub> versus v<sup>½</sup> is what the Randles–Sevcik equation predicts for a species that must <b>diffuse</b> to the electrode. An adsorbed species would give i<sub>p</sub> ∝ v, so this plot would curve upward. This test does not tell you about kinetics: irreversible waves also scale with v<sup>½</sup>. A stirred solution would give a sigmoidal, steady-state current instead of peaks.'},
+  {q:'This ferrocene CV was recorded at 100 mV s⁻¹ (anodic peak current labeled). If you repeat the scan at 400 mV s⁻¹ with everything else the same, what anodic peak current do you expect?',
+   build(el){new Chart(el,{height:290,x:{...EAX},y:{...IAX},series:[{name:'Ferrocene, 100 mV/s',x:arr(FC.E),y:arr(FC.I),color:'var(--s1)'}],marks:[{x:FCa.Epf,y:FCa.ipf,label:'ipa = '+FCa.ipf.toFixed(1)+' µA',dx:10,dy:2,r:4}],tip:cvTip()});},
+   opts:['About 29 µA (no change)','About 42 µA','About 59 µA','About 118 µA'],ans:2,
+   why:'i<sub>p</sub> ∝ v<sup>½</sup>. Quadrupling v multiplies i<sub>p</sub> by √4 = 2, giving <b>about 59 µA</b>. 118 µA would be the answer if i<sub>p</sub> were proportional to v (adsorbed species). 42 µA is the change for doubling v. Because ferrocene is reversible, the peak potential would not change.'},
+  {q:'Compound Y gives the CV below at 100 mV s⁻¹. ΔE<sub>p</sub> is close to 59 mV, but the return peak is much smaller than the forward peak. What is the most likely explanation?',
+   build(el){const s=sim({E0:0.35,k0:1,D:1e-5,C:1,Ei:0,Es:0.75,start:'R',kc:0.2,v:0.1}),a=analyze(s);
+     new Chart(el,{height:290,x:{...EAX},y:{...IAX},series:[{name:'Compound Y',x:arr(s.E),y:arr(s.I),color:'var(--s1)'}],marks:[{x:a.Epf,y:a.ipf,label:'forward',dx:10,dy:2,r:4},{x:a.Epr,y:a.ipr,label:'return',dx:10,dy:12,r:4}],tip:cvTip()});},
+   opts:['The oxidized product is consumed by a chemical reaction after it forms (EC mechanism)','Electron transfer is irreversible','The scan rate is too fast','The concentration of Y is too high'],ans:0,
+   why:'A ΔE<sub>p</sub> near 59 mV says electron transfer is <b>fast</b>, so the couple is electrochemically reversible. The small return peak means less of the oxidized product is left to reduce: it is being removed by a <b>follow-up chemical reaction</b> (an EC mechanism; here a first-order decay with k = 0.2 s⁻¹). Scanning faster would actually help, since it leaves less time for the product to decay and the return peak would grow back toward a 1 : 1 ratio.'},
+  {q:'For the irreversible oxidation of ascorbic acid, the peak potential was measured at seven scan rates. Use the slope and the relation ΔE<sub>p</sub> = 29.6/(αn) mV per decade to find αn.',
+   build(el){const vs=[0.01,0.02,0.05,0.1,0.2,0.5,1];const lv=vs.map(Math.log10),E=vs.map(v=>analyze(sim({...CMP.aa.p,v})).Epf);
+     const n=lv.length,mx=lv.reduce((a,b)=>a+b)/n,my=E.reduce((a,b)=>a+b)/n,sl=lv.reduce((s,x,i)=>s+(x-mx)*(E[i]-my),0)/lv.reduce((s,x)=>s+(x-mx)**2,0);
+     new Chart(el,{height:290,x:{label:'log₁₀ v  (v in V/s)',min:-2.1,max:0.1,tipName:'log v',tipFmt:v=>minus(v.toFixed(2))},y:{label:'Epa vs Ag/AgCl (V)',min:0.2,max:0.4,tipName:'Epa',tipFmt:fV},series:[{name:'Fit',x:[-2.1,0.1],y:[my+sl*(-2.1-mx),my+sl*(0.1-mx)],color:'var(--ref)',width:1.6,hover:false},{name:'Ascorbic acid',x:lv,y:E,color:'var(--s3)',line:false,dots:true}]});},
+   opts:['αn ≈ 0.25','αn ≈ 0.5','αn ≈ 1.0','αn ≈ 2.0'],ans:1,
+   why:'Across two decades (log v from −2 to 0) the peak moves from about +0.24 V to +0.36 V, a slope of about 59 mV per decade. Then αn = 29.6/59 ≈ <b>0.5</b>. For a 2-electron oxidation that means the rate-limiting step behaves like a single electron transfer with α ≈ 0.5. A reversible couple would give a slope of zero.'}
+];
+(function quiz(){
+  const list=$('quizList'), pips=$('qPips');
+  let st={};try{st=JSON.parse(localStorage.getItem('cvq')||'{}')||{};}catch(e){st={};}
+  const save=()=>{try{localStorage.setItem('cvq',JSON.stringify(st));}catch(e){}};
+  pips.innerHTML=QUIZ.map(()=>'<i></i>').join('');
+  const cards=[];
+  QUIZ.forEach((Q,qi)=>{
+    const art=document.createElement('article');art.className='q';art.id='q'+(qi+1);
+    art.innerHTML=`<div style="min-width:0"><div class="qplot"></div></div>
+      <div class="qside"><span class="qn">QUESTION ${qi+1} OF ${QUIZ.length}</span><p class="qtext">${Q.q}</p><div class="opts" role="group" aria-label="Answer choices"></div><div class="explain" hidden></div></div>`;
+    list.append(art);
+    Q.build(art.querySelector('.qplot'));
+    const box=art.querySelector('.opts');
+    const btns=Q.opts.map((o,oi)=>{const b=document.createElement('button');b.type='button';b.className='opt';b.innerHTML=`<span class="L">${'ABCD'[oi]}</span><span>${o}</span><span class="mark"></span>`;b.onclick=()=>{if(st[qi]!=null)return;st[qi]=oi;save();paint();};box.append(b);return b;});
+    cards.push({art,btns,Q});
+  });
+  function paint(){
+    let score=0,done=0;
+    cards.forEach(({art,btns,Q},qi)=>{
+      const a=st[qi], ex=art.querySelector('.explain');
+      btns.forEach((b,oi)=>{b.disabled=a!=null;b.classList.toggle('right',a!=null&&oi===Q.ans);b.classList.toggle('wrong',a!=null&&oi===a&&a!==Q.ans);
+        b.querySelector('.mark').textContent=a==null?'':oi===Q.ans?(a===oi?'✓ Correct':'✓ Answer'):(oi===a?'✗ Your answer':'');});
+      if(a!=null){done++;if(a===Q.ans)score++;ex.hidden=false;ex.innerHTML=(a===Q.ans?'<b>Correct.</b> ':'<b>Not quite.</b> ')+Q.why;}else{ex.hidden=true;}
+      pips.children[qi].className=a==null?'':a===Q.ans?'ok':'no';
+    });
+    $('qScore').textContent=`Score ${score} / ${QUIZ.length}`+(done<QUIZ.length?` · ${QUIZ.length-done} to go`:' · complete');
+  }
+  $('qReset').onclick=()=>{st={};save();paint();};
+  paint();
+})();
+
+/* ---------------- index highlight ---------------- */
+(function toc(){
+  const links=[...document.querySelectorAll('nav.toc a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id));}});},{rootMargin:'-30% 0px -60% 0px'});
+  secs.forEach(s=>s&&io.observe(s));
+})();
+</script>
+</body>
+</html>
