@@ -1,8 +1,5 @@
 <title>Cyclic Voltammetry Primer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,500;0,600;1,500&display=swap">
 <style>
 /* Layout: a lab-manual page. Sticky lesson index on the left, a 68ch reading column, and
    wider instrument-style figure panels (plot + controls + readouts) that sit inside it. */
@@ -14,9 +11,12 @@
   --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --ref:#A3ADB4;
   --q1:#86b6ef; --q2:#5598e7; --q3:#2a78d6; --q4:#256abf; --q5:#184f95; --q6:#0d366b;
   --good:#006300; --good-wash:#E2F1E2; --bad:#B12A2A; --bad-wash:#F7E3E3;
-  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
-  --sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* One family throughout: Segoe UI (Windows). Other systems fall back to their own UI sans. */
+  --sans:"Segoe UI", "Segoe UI Variable Text", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --serif:var(--sans);
+  --mono:var(--sans);
+  /* Clip colours used by many potentiostats: green = WE, white = RE, red = CE */
+  --wire-we:#2E9D4F; --wire-re:#E9EDEF; --wire-ce:#D63B3B;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -150,11 +150,32 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
 .card .formula{font:500 .8rem var(--mono);color:var(--ink2)}
 .card p{font-size:.88rem;color:var(--ink2);line-height:1.5}
 
-/* electrodes list */
-.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;max-width:880px}
-@media (max-width:760px){.trio{grid-template-columns:minmax(0,1fr)}}
-.trio div{border-top:2px solid var(--ink);padding-top:10px;display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--ink2)}
-.trio b{font:600 .95rem var(--sans);color:var(--ink)}
+/* three-electrode cell diagram */
+.cellfig{display:flex;flex-direction:column;gap:12px}
+.cellwrap{position:relative;width:100%;max-width:700px;margin:0 auto}
+.cellwrap svg{display:block;width:100%;height:auto}
+.cellwrap svg text{font-family:var(--sans)}
+.cell-hint{font-size:.88rem;color:var(--ink2);text-align:center}
+.eb{cursor:pointer;outline:none}
+.eb rect.pill{fill:var(--accent);stroke:var(--surface);stroke-width:3}
+.eb text{fill:var(--accent-ink);font-weight:700;font-size:15px;letter-spacing:.04em}
+.eb:hover rect.pill,.eb[aria-expanded="true"] rect.pill{fill:var(--ink)}
+.eb:hover text,.eb[aria-expanded="true"] text{fill:var(--bg)}
+.eb:focus-visible rect.pill{stroke:var(--accent);stroke-width:3;outline:none}
+.eb:focus-visible rect.ring{stroke:var(--accent)}
+.eb rect.ring{fill:none;stroke:transparent;stroke-width:2}
+.pop{position:absolute;z-index:5;width:min(360px,calc(100% - 16px));background:var(--raise);color:var(--ink);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;font-size:.9rem;line-height:1.5}
+.pop:focus{outline:none}
+.pop .pop-head{display:flex;align-items:flex-start;gap:10px}
+.pop h4{margin:0;font:600 1rem/1.3 var(--sans);flex:1}
+.pop h4 span{display:block;font:600 .72rem var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.pop .x{border:0;background:var(--bg);color:var(--ink2);width:28px;height:28px;border-radius:6px;font:600 1rem/1 var(--sans);cursor:pointer;flex:none}
+.pop .x:hover{color:var(--ink)}
+.pop p{color:var(--ink2)}
+.pop dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.84rem;border-top:1px solid var(--line);padding-top:8px}
+.pop dt{color:var(--muted)}
+.pop dd{margin:0;color:var(--ink)}
+.pop .wire{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:6px;border:1px solid var(--ink2)}
 
 .callout{max-width:68ch;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px 16px;font-size:.92rem;color:var(--ink2);display:flex;flex-direction:column;gap:6px}
 .callout b{color:var(--ink)}
@@ -187,7 +208,8 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-si
 @media (max-width:900px){
   .wrap{grid-template-columns:minmax(0,1fr);gap:0}
   body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-  nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+  nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+  nav.toc::-webkit-scrollbar{display:none}
   nav.toc .eyebrow{display:none}
   nav.toc ol{flex-direction:row;gap:2px;white-space:nowrap}
   .scorebar{top:calc(env(safe-area-inset-top,0px) + 56px)}
@@ -237,10 +259,94 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-si
   <div class="prose">
     <p>A potentiostat sweeps the potential of a small <b>working electrode</b> linearly in time, from a starting potential <i>E</i><sub>i</sub> to a <b>switching potential</b> <i>E</i><sub>λ</sub>, then back again, at a constant <b>scan rate</b> <i>v</i> (V s<sup>−1</sup>). It records the current that flows as molecules near the electrode are oxidized or reduced. Plotting current against potential gives the cyclic voltammogram (CV): a pair of peaks whose positions, sizes and separation report on the thermodynamics and kinetics of the redox couple.</p>
   </div>
-  <div class="trio">
-    <div><b>Working electrode</b>Where the reaction you study happens. Glassy carbon, Pt or Au disk, polished before use. Its area <i>A</i> sets the current scale.</div>
-    <div><b>Reference electrode</b>Holds a fixed, known potential so <i>E</i> has a scale. Here Ag/AgCl (3 M KCl); SCE is also common. No current passes through it.</div>
-    <div><b>Counter electrode</b>A Pt wire that carries the current needed to balance the working electrode, closing the circuit.</div>
+  <div class="fig wide cellfig">
+    <div class="fig-title">The three-electrode cell</div>
+    <p class="cell-hint">Select <b>WE</b>, <b>RE</b> or <b>CE</b> in the diagram to see what each electrode does.</p>
+    <div class="cellwrap" id="cellWrap">
+      <svg id="cellSvg" viewBox="0 0 700 470" role="group" aria-label="Diagram of a three-electrode electrochemical cell connected to a potentiostat">
+        <!-- potentiostat -->
+        <rect x="175" y="12" width="350" height="92" rx="10" style="fill:var(--raise);stroke:var(--axis);stroke-width:1.5"/>
+        <text x="195" y="42" font-size="17" font-weight="600" style="fill:var(--ink)">Potentiostat</text>
+        <text x="195" y="64" font-size="12.5" style="fill:var(--ink2)">Controls E of WE vs RE</text>
+        <text x="195" y="82" font-size="12.5" style="fill:var(--ink2)">Measures i through WE and CE</text>
+        <rect x="405" y="24" width="104" height="56" rx="5" style="fill:var(--bg);stroke:var(--axis)"/>
+        <path d="M412 54 C428 54 438 54 446 42 C450 34 456 35 460 43 C467 51 488 49 502 47 C488 51 476 53 470 59 C464 69 458 71 452 63 C446 55 430 56 412 56" style="fill:none;stroke:var(--s1);stroke-width:1.8;stroke-linecap:round"/>
+        <!-- cables: outline then coloured core -->
+        <g style="fill:none;stroke-linecap:round">
+          <path d="M300 104 C300 118 250 110 250 124" style="stroke:var(--ink2);stroke-width:6.5"/>
+          <path d="M345 104 C345 114 350 114 350 124" style="stroke:var(--ink2);stroke-width:6.5"/>
+          <path d="M390 104 C390 118 450 110 450 124" style="stroke:var(--ink2);stroke-width:6.5"/>
+          <path d="M300 104 C300 118 250 110 250 124" style="stroke:var(--wire-re);stroke-width:4"/>
+          <path d="M345 104 C345 114 350 114 350 124" style="stroke:var(--wire-we);stroke-width:4"/>
+          <path d="M390 104 C390 118 450 110 450 124" style="stroke:var(--wire-ce);stroke-width:4"/>
+        </g>
+        <g style="stroke:var(--ink2);stroke-width:1.2">
+          <rect x="243" y="120" width="14" height="12" rx="2" style="fill:var(--wire-re)"/>
+          <rect x="343" y="120" width="14" height="12" rx="2" style="fill:var(--wire-we)"/>
+          <rect x="443" y="120" width="14" height="12" rx="2" style="fill:var(--wire-ce)"/>
+        </g>
+        <!-- solution and beaker -->
+        <path d="M182 262 L518 262 L518 418 Q518 436 500 436 L200 436 Q182 436 182 418 Z" style="fill:var(--accent-wash)"/>
+        <line x1="182" y1="262" x2="518" y2="262" style="stroke:var(--s1);stroke-width:1.5;opacity:.55"/>
+        <path d="M180 200 L180 418 Q180 438 200 438 L500 438 Q520 438 520 418 L520 200" style="fill:none;stroke:var(--ink2);stroke-width:2.5"/>
+        <!-- gas inlet with bubbles -->
+        <rect x="492" y="146" width="7" height="262" rx="3" style="fill:var(--surface);fill-opacity:.6;stroke:var(--ink2);stroke-width:1.4"/>
+        <g style="fill:none;stroke:var(--s1);stroke-width:1.3">
+          <circle cx="496" cy="420" r="3.2"/><circle cx="500" cy="402" r="2.6"/><circle cx="493" cy="386" r="2.2"/><circle cx="498" cy="368" r="2.6"/><circle cx="494" cy="348" r="1.9"/>
+        </g>
+        <!-- reference electrode: glass tube, KCl fill, Ag/AgCl wire, frit -->
+        <rect x="239" y="132" width="22" height="258" rx="9" style="fill:var(--surface);fill-opacity:.75;stroke:var(--ink2);stroke-width:1.6"/>
+        <rect x="241.5" y="206" width="17" height="176" rx="6" style="fill:var(--s3);opacity:.22"/>
+        <line x1="250" y1="132" x2="250" y2="352" style="stroke:var(--muted);stroke-width:2"/>
+        <rect x="247" y="318" width="6" height="40" rx="2.5" style="fill:var(--ink2)"/>
+        <rect x="241" y="382" width="18" height="10" rx="2" style="fill:var(--ref);stroke:var(--ink2);stroke-width:1"/>
+        <!-- working electrode: insulating body with carbon disk -->
+        <rect x="338" y="132" width="24" height="268" rx="5" style="fill:var(--surface);stroke:var(--ink2);stroke-width:1.6"/>
+        <line x1="350" y1="132" x2="350" y2="388" style="stroke:var(--muted);stroke-width:2"/>
+        <rect x="343" y="386" width="14" height="14" rx="1" style="fill:var(--ink)"/>
+        <!-- counter electrode: Pt wire in glass, coiled end -->
+        <rect x="443" y="132" width="14" height="160" rx="6" style="fill:var(--surface);fill-opacity:.75;stroke:var(--ink2);stroke-width:1.4"/>
+        <line x1="450" y1="132" x2="450" y2="318" style="stroke:var(--ink2);stroke-width:2.2"/>
+        <path d="M450 318 C465 322 465 330 450 334 C435 338 435 346 450 350 C465 354 465 362 450 366 C435 370 435 378 450 382 C465 386 465 394 450 398" style="fill:none;stroke:var(--ink2);stroke-width:2.2"/>
+        <!-- cell lid (drawn after electrodes so they pass through it) -->
+        <rect x="170" y="186" width="360" height="14" rx="3" style="fill:var(--grid);stroke:var(--axis);stroke-width:1.2"/>
+        <!-- annotations: hidden on narrow screens -->
+        <g id="cellNotes" font-size="12.5" style="fill:var(--ink2)">
+          <g style="stroke:var(--muted);stroke-width:1">
+            <line x1="122" y1="284" x2="182" y2="292"/>
+            <line x1="122" y1="331" x2="246" y2="336"/>
+            <line x1="106" y1="387" x2="240" y2="387"/>
+            <line x1="556" y1="360" x2="463" y2="360"/>
+            <line x1="556" y1="158" x2="500" y2="158"/>
+            <line x1="350" y1="404" x2="350" y2="448"/>
+          </g>
+          <text x="20" y="276">Analyte in</text><text x="20" y="292">0.1 M electrolyte</text>
+          <text x="20" y="328">Ag/AgCl wire</text><text x="20" y="344">in 3 M KCl</text>
+          <text x="20" y="391">Porous frit</text>
+          <text x="562" y="364">Pt wire coil</text>
+          <text x="562" y="162">N₂ or Ar purge</text>
+          <text x="350" y="463" text-anchor="middle">3 mm glassy-carbon disk</text>
+        </g>
+        <!-- clickable labels -->
+        <g class="eb" data-e="re" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" aria-label="RE, reference electrode: show details">
+          <rect class="ring" x="223" y="140" width="54" height="36" rx="18"/>
+          <rect class="pill" x="227" y="144" width="46" height="28" rx="14"/>
+          <text x="250" y="163.5" text-anchor="middle">RE</text>
+        </g>
+        <g class="eb" data-e="we" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" aria-label="WE, working electrode: show details">
+          <rect class="ring" x="323" y="140" width="54" height="36" rx="18"/>
+          <rect class="pill" x="327" y="144" width="46" height="28" rx="14"/>
+          <text x="350" y="163.5" text-anchor="middle">WE</text>
+        </g>
+        <g class="eb" data-e="ce" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" aria-label="CE, counter electrode: show details">
+          <rect class="ring" x="423" y="140" width="54" height="36" rx="18"/>
+          <rect class="pill" x="427" y="144" width="46" height="28" rx="14"/>
+          <text x="450" y="163.5" text-anchor="middle">CE</text>
+        </g>
+      </svg>
+      <div class="pop" id="cellPop" role="dialog" aria-modal="false" aria-labelledby="cellPopTitle" tabindex="-1" hidden></div>
+    </div>
+    <p class="cap">Cable colours follow a common potentiostat convention (green WE, white RE, red CE); check the labels on your own instrument.</p>
   </div>
   <div class="prose">
     <p>Three conditions make the current interpretable. The solution contains about 0.1 M of inert <b>supporting electrolyte</b>, which carries charge so the analyte does not migrate in the field. The solution is <b>not stirred</b> during the scan, so the analyte reaches the electrode only by diffusion. And dissolved O<sub>2</sub> is removed by bubbling N<sub>2</sub> or Ar, because O<sub>2</sub> is reduced at negative potentials and adds its own wave.</p>
@@ -534,7 +640,7 @@ class Chart{
     const xt=ticks(x0,x1,Math.max(3,Math.floor(pw/72)));
     const sx=v=>m.l+(v-x0)/(x1-x0)*pw, sy=v=>m.t+(1-(v-y0)/(y1-y0))*ph;
     this.sx=sx;this.sy=sy;this.m=m;this.W=W;this.H=H;
-    let g=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(c.aria||'chart')}" font-family="IBM Plex Sans, system-ui, sans-serif">`;
+    let g=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(c.aria||'chart')}" style="font-family:var(--sans)">`;
     g+=`<defs><clipPath id="${this.uid}"><rect x="${m.l}" y="${m.t}" width="${pw}" height="${ph}"/></clipPath></defs>`;
     g+=`<rect x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" style="fill:transparent"/>`;
     yt.vals.forEach((v,i)=>{const y=sy(v).toFixed(1);g+=`<line x1="${m.l}" x2="${m.l+pw}" y1="${y}" y2="${y}" style="stroke:var(--grid);stroke-width:1"/><text x="${m.l-8}" y="${y}" dy="0.32em" text-anchor="end" font-size="11.5" style="fill:var(--muted);font-variant-numeric:tabular-nums">${yl[i]}</text>`;});
@@ -640,7 +746,7 @@ const FCa=analyze(FC);
   const t=arr(FC.E).map((_,k)=>k*FC.dt);
   const wave=new Chart($('heroWave'),{height:280,x:{label:'Time (s)',tipName:'t',tipFmt:v=>v.toFixed(1)+' s'},y:{label:'E vs Ag/AgCl (V)',tipName:'E',tipFmt:fV},
     series:[{name:'Applied potential',x:t,y:arr(FC.E),color:'var(--ink2)'}],
-    marks:[{x:0,y:0,label:'Eᵢ',dx:8,dy:-6,color:'var(--ink2)'},{x:t[FC.nHalf],y:0.8,label:'E_λ (switch)',anchor:'middle',dx:0,dy:16,color:'var(--ink2)'}].map(mm=>({...mm,label:mm.label.replace('E_λ','Eλ')})),
+    marks:[{x:0,y:0,label:'Eᵢ (start)',dx:10,dy:-2,color:'var(--ink2)'},{x:t[FC.nHalf],y:0.8,label:'Eλ (switch)',anchor:'start',dx:12,dy:-2,color:'var(--ink2)'}],
     aria:'Triangular potential waveform from 0 to 0.8 V and back over 16 seconds'});
   const cv=new Chart($('heroCV'),{height:280,x:{...EAX},y:{...IAX},series:[{name:'Ferrocene',x:arr(FC.E),y:arr(FC.I),color:'var(--s1)'}],tip:cvTip(),
     marks:[{x:FCa.Epf,y:FCa.ipf,label:'anodic peak (Fc → Fc⁺)',dx:10,dy:2},{x:FCa.Epr,y:FCa.ipr,label:'cathodic peak (Fc⁺ → Fc)',dx:10,dy:14}],
@@ -670,7 +776,8 @@ const FCa=analyze(FC);
     ch.update({series:[
       {name:`n = ${other}`,x:xs,y:fr(other),color:'var(--ref)',width:1.6},
       {name:`n = ${n}`,x:xs,y:fr(n),color:'var(--s2)',width:2.5}
-    ],guides:[{type:'v',at:0,label:'E°′'}]});
+    ],legendItems:[{name:`n = ${n} (selected)`,color:'var(--s2)',width:2.5},{name:`n = ${other}`,color:'var(--ref)',width:1.6}],
+    guides:[{type:'v',at:0,label:'E°′'}]});
     const frac=1/(1+Math.exp(-n*f*e));
     ch.setOverlay('p',e,frac,'var(--s2)');
     $('nEo').textContent=fmVs(e);
@@ -921,7 +1028,7 @@ const QUIZ=[
      new Chart(el,{height:290,x:{...EAX},y:{...IAX},series:[{name:'Compound Y',x:arr(s.E),y:arr(s.I),color:'var(--s1)'}],marks:[{x:a.Epf,y:a.ipf,label:'forward',dx:10,dy:2,r:4},{x:a.Epr,y:a.ipr,label:'return',dx:10,dy:12,r:4}],tip:cvTip()});},
    opts:['The oxidized product is consumed by a chemical reaction after it forms (EC mechanism)','Electron transfer is irreversible','The scan rate is too fast','The concentration of Y is too high'],ans:0,
    why:'A ΔE<sub>p</sub> near 59 mV says electron transfer is <b>fast</b>, so the couple is electrochemically reversible. The small return peak means less of the oxidized product is left to reduce: it is being removed by a <b>follow-up chemical reaction</b> (an EC mechanism; here a first-order decay with k = 0.2 s⁻¹). Scanning faster would actually help, since it leaves less time for the product to decay and the return peak would grow back toward a 1 : 1 ratio.'},
-  {q:'For the irreversible oxidation of ascorbic acid, the peak potential was measured at seven scan rates. Use the slope and the relation ΔE<sub>p</sub> = 29.6/(αn) mV per decade to find αn.',
+  {q:'For the irreversible oxidation of ascorbic acid, the peak potential was measured at seven scan rates. The peak shifts by 29.6/(αn) mV for every tenfold increase in v. Use the slope of the plot to find αn.',
    build(el){const vs=[0.01,0.02,0.05,0.1,0.2,0.5,1];const lv=vs.map(Math.log10),E=vs.map(v=>analyze(sim({...CMP.aa.p,v})).Epf);
      const n=lv.length,mx=lv.reduce((a,b)=>a+b)/n,my=E.reduce((a,b)=>a+b)/n,sl=lv.reduce((s,x,i)=>s+(x-mx)*(E[i]-my),0)/lv.reduce((s,x)=>s+(x-mx)**2,0);
      new Chart(el,{height:290,x:{label:'log₁₀ v  (v in V/s)',min:-2.1,max:0.1,tipName:'log v',tipFmt:v=>minus(v.toFixed(2))},y:{label:'Epa vs Ag/AgCl (V)',min:0.2,max:0.4,tipName:'Epa',tipFmt:fV},series:[{name:'Fit',x:[-2.1,0.1],y:[my+sl*(-2.1-mx),my+sl*(0.1-mx)],color:'var(--ref)',width:1.6,hover:false},{name:'Ascorbic acid',x:lv,y:E,color:'var(--s3)',line:false,dots:true}]});},
@@ -957,6 +1064,63 @@ const QUIZ=[
   }
   $('qReset').onclick=()=>{st={};save();paint();};
   paint();
+})();
+
+/* ---------------- three-electrode cell pop-ups ---------------- */
+(function cell(){
+  const INFO={
+    we:{tag:'WE',name:'Working electrode',wire:'var(--wire-we)',clip:'Green',
+      text:['This is where the reaction you are studying happens. The potentiostat sweeps the potential of the WE, and the current that flows through it is the signal you record.',
+            'Only its tip touches the solution: a polished disk with a small, well-defined area, sealed in an insulating body. Polish it with alumina slurry before each session, because a dirty surface slows electron transfer and widens ΔE<sub>p</sub>.'],
+      facts:[['Typical','Glassy-carbon, Pt or Au disk'],['Area','A = 0.0707 cm² for a 3 mm disk'],['Current','Your measured signal, i']]},
+    re:{tag:'RE',name:'Reference electrode',wire:'var(--wire-re)',clip:'White',
+      text:['Gives the potential a fixed zero. The potentiostat controls the potential of the WE <i>relative to</i> the RE, so the RE must hold a constant, known potential for the whole scan.',
+            'It can do this because almost no current passes through it, so its composition never changes. For Ag/AgCl the half-reaction is AgCl(s) + e⁻ ⇌ Ag(s) + Cl⁻. Place its tip close to the WE, and keep the frit wet and free of air bubbles.'],
+      facts:[['Typical','Ag/AgCl (3 M KCl) or saturated calomel (SCE)'],['Potential','+0.210 V vs SHE for Ag/AgCl, 3 M KCl'],['Current','Essentially zero']]},
+    ce:{tag:'CE',name:'Counter electrode',wire:'var(--wire-ce)',clip:'Red',
+      text:['Completes the electrical circuit. Whatever current flows at the WE flows in the opposite direction at the CE: if the analyte is oxidized at the WE, something (often the solvent or electrolyte) is reduced at the CE.',
+            'Its area is made larger than the WE so that it never limits the current. Its potential floats to whatever value is needed and is not measured. It is also called the auxiliary electrode.'],
+      facts:[['Typical','Pt wire or coil, or a graphite rod'],['Area','Larger than the WE'],['Current','Equal and opposite to the WE']]}
+  };
+  const wrap=$('cellWrap'), svg=$('cellSvg'), pop=$('cellPop'), notes=$('cellNotes');
+  const btns=[...svg.querySelectorAll('.eb')];
+  let open=null;
+  function close(focusBack){
+    if(!open)return;
+    const b=open;open=null;pop.hidden=true;b.setAttribute('aria-expanded','false');
+    if(focusBack)b.focus();
+  }
+  function show(b){
+    if(open===b){close(true);return;}
+    if(open)open.setAttribute('aria-expanded','false');
+    const d=INFO[b.dataset.e];
+    pop.innerHTML=`<div class="pop-head"><h4 id="cellPopTitle"><span>${d.tag}</span>${d.name}</h4><button class="x" type="button" aria-label="Close">×</button></div>`+
+      d.text.map(t=>`<p>${t}</p>`).join('')+
+      `<dl>${d.facts.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}<dt>Cable</dt><dd><i class="wire" style="background:${d.wire}"></i>${d.clip} on many potentiostats</dd></dl>`;
+    pop.querySelector('.x').onclick=()=>close(true);
+    pop.hidden=false;open=b;b.setAttribute('aria-expanded','true');
+    const wr=wrap.getBoundingClientRect(), br=b.querySelector('.pill').getBoundingClientRect();
+    const pw=pop.offsetWidth;
+    let left=br.left+br.width/2-wr.left-pw/2;
+    left=Math.max(8,Math.min(left,wr.width-pw-8));
+    pop.style.left=left+'px';
+    pop.style.top=(br.bottom-wr.top+10)+'px';
+    pop.focus({preventScroll:true});
+  }
+  btns.forEach(b=>{
+    b.addEventListener('click',e=>{e.stopPropagation();show(b);});
+    b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(b);}});
+  });
+  pop.addEventListener('click',e=>e.stopPropagation());
+  document.addEventListener('click',()=>close(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close(true);});
+  // On narrow screens, crop to the cell itself and drop the side notes so the text stays legible.
+  new ResizeObserver(()=>{
+    const narrow=wrap.clientWidth<560;
+    svg.setAttribute('viewBox',narrow?'160 0 380 450':'0 0 700 470');
+    notes.style.display=narrow?'none':'';
+    if(open){const b=open;open=null;show(b);}
+  }).observe(wrap);
 })();
 
 /* ---------------- index highlight ---------------- */
