@@ -930,8 +930,8 @@ const QUIZ=[
 ];
 (function quiz(){
   const list=$('quizList'), pips=$('qPips');
-  let st={};try{st=JSON.parse(localStorage.getItem('cvq')||'{}')||{};}catch(e){st={};}
-  const save=()=>{try{localStorage.setItem('cvq',JSON.stringify(st));}catch(e){}};
+  let st={};try{st=JSON.parse(localStorage.getItem('cv-primer-quiz')||'{}')||{};}catch(e){st={};}
+  const save=()=>{try{localStorage.setItem('cv-primer-quiz',JSON.stringify(st));}catch(e){}};
   pips.innerHTML=QUIZ.map(()=>'<i></i>').join('');
   const cards=[];
   QUIZ.forEach((Q,qi)=>{

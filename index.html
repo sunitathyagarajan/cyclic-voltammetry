@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive pre-lab module on cyclic voltammetry: Nernst thermodynamics, reversible, quasi-reversible and irreversible electron transfer, concentration and scan-rate dependence, and a 10-question plot-based quiz.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cyclic Voltammetry Primer">
+<meta property="og:description" content="Interactive pre-lab module on cyclic voltammetry: Nernst thermodynamics, reversible, quasi-reversible and irreversible electron transfer, concentration and scan-rate dependence, and a 10-question plot-based quiz.">
+<meta property="og:url" content="https://sunitathyagarajan.github.io/cyclic-voltammetry/">
+<link rel="canonical" href="https://sunitathyagarajan.github.io/cyclic-voltammetry/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231C5CAB'/%3E%3Cpath d='M4 17 C12 17 13 6 17 6 C21 6 21 13 28 13 M28 13 C21 13 21 26 16 26 C11 26 12 17 4 17' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Cyclic Voltammetry Primer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -938,8 +945,8 @@ const QUIZ=[
 ];
 (function quiz(){
   const list=$('quizList'), pips=$('qPips');
-  let st={};try{st=JSON.parse(localStorage.getItem('cvq')||'{}')||{};}catch(e){st={};}
-  const save=()=>{try{localStorage.setItem('cvq',JSON.stringify(st));}catch(e){}};
+  let st={};try{st=JSON.parse(localStorage.getItem('cv-primer-quiz')||'{}')||{};}catch(e){st={};}
+  const save=()=>{try{localStorage.setItem('cv-primer-quiz',JSON.stringify(st));}catch(e){}};
   pips.innerHTML=QUIZ.map(()=>'<i></i>').join('');
   const cards=[];
   QUIZ.forEach((Q,qi)=>{
