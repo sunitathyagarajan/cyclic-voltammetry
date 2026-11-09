@@ -6,12 +6,13 @@ An interactive pre-lab module that introduces cyclic voltammetry (CV) to student
 
 ## What it covers
 
-1. **The experiment**: the three-electrode cell, supporting electrolyte, degassing, and the IUPAC sign convention.
+1. **The experiment**: the three-electrode cell, supporting electrolyte, degassing, what the current measures (a reaction rate), what positive (anodic) and negative (cathodic) current mean, and the IUPAC versus US sign conventions.
 2. **Thermodynamics**: ΔG° = −nFE°, the Nernst equation, formal and half-wave potentials, and a step-through view of concentration profiles that shows why a CV has peaks.
 3. **Reversibility**: Butler–Volmer kinetics, the Matsuda–Ayabe parameter, and example CVs of ferrocene (reversible), potassium ferricyanide (quasi-reversible) and ascorbic acid (irreversible).
-4. **Concentration**: the Randles–Sevcik equation and a calibration-line explorer.
-5. **Scan rate**: peak current versus √v and peak potential versus log v for each compound.
-6. **Quiz**: ten plot-based questions with explanations.
+4. **Two electrons**: a worked example of a two-step oxidation and reduction (tetrathiafulvalene), and an explorer showing how two one-electron waves merge into a single two-electron wave.
+5. **Concentration**: the Randles–Sevcik equation and a calibration-line explorer.
+6. **Scan rate**: peak current versus √v and peak potential versus log v for each compound, plus an adsorbed-versus-diffusing explorer (i<sub>p</sub> ∝ v versus i<sub>p</sub> ∝ √v).
+7. **Quiz**: ten plot-based questions with explanations.
 
 Every curve is computed in the browser by a finite-difference simulation of diffusion with Butler–Volmer electron transfer. There is no server and nothing to install.
 

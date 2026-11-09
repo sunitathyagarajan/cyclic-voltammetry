@@ -8,7 +8,7 @@ cd "$(dirname "$0")"
 SRC=cv-primer.html
 OUT=index.html
 SITE="https://sunitathyagarajan.github.io/cyclic-voltammetry/"
-DESC="Interactive pre-lab module on cyclic voltammetry: Nernst thermodynamics, reversible, quasi-reversible and irreversible electron transfer, concentration and scan-rate dependence, and a 10-question plot-based quiz."
+DESC="Interactive pre-lab module on cyclic voltammetry: Nernst thermodynamics, reversible, quasi-reversible and irreversible electron transfer, two-electron transfers, concentration and scan-rate dependence, adsorbed versus diffusing species, and a 10-question plot-based quiz."
 # Inline SVG favicon (a small voltammogram), so browsers don't request a missing favicon.ico.
 ICON="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231C5CAB'/%3E%3Cpath d='M4 17 C12 17 13 6 17 6 C21 6 21 13 28 13 M28 13 C21 13 21 26 16 26 C11 26 12 17 4 17' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E"
 
