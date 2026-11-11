@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Interactive pre-lab module on cyclic voltammetry: Nernst thermodynamics, reversible, quasi-reversible and irreversible electron transfer, two-electron transfers, concentration and scan-rate dependence, adsorbed versus diffusing species, and a 10-question plot-based quiz.">
+<meta name="description" content="Interactive pre-lab module on cyclic voltammetry: an introduction to electrochemical reactions, potentiometry and voltammetry, Nernst thermodynamics, reversible, quasi-reversible and irreversible electron transfer, two-electron transfers, concentration and scan-rate dependence, adsorbed versus diffusing species, and a 10-question plot-based quiz.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Cyclic Voltammetry Primer">
-<meta property="og:description" content="Interactive pre-lab module on cyclic voltammetry: Nernst thermodynamics, reversible, quasi-reversible and irreversible electron transfer, two-electron transfers, concentration and scan-rate dependence, adsorbed versus diffusing species, and a 10-question plot-based quiz.">
+<meta property="og:description" content="Interactive pre-lab module on cyclic voltammetry: an introduction to electrochemical reactions, potentiometry and voltammetry, Nernst thermodynamics, reversible, quasi-reversible and irreversible electron transfer, two-electron transfers, concentration and scan-rate dependence, adsorbed versus diffusing species, and a 10-question plot-based quiz.">
 <meta property="og:url" content="https://sunitathyagarajan.github.io/cyclic-voltammetry/">
 <link rel="canonical" href="https://sunitathyagarajan.github.io/cyclic-voltammetry/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231C5CAB'/%3E%3Cpath d='M4 17 C12 17 13 6 17 6 C21 6 21 13 28 13 M28 13 C21 13 21 26 16 26 C11 26 12 17 4 17' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -148,6 +148,8 @@ dl.ro dd{margin:0;font-family:var(--mono);text-align:right;font-variant-numeric:
 /* small schematic SVGs in figure side panels */
 .schem{display:block;width:100%;max-width:320px;height:auto;border-radius:8px}
 .schem text{font-family:var(--sans)}
+.mini{display:block;width:100%;max-width:300px;height:auto}
+.mini text{font-family:var(--sans)}
 
 /* tables */
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
@@ -240,6 +242,7 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-si
 <nav class="toc" aria-label="Lesson sections">
   <span class="eyebrow">Lesson</span>
   <ol>
+    <li><a href="#intro"><span>00</span>Introduction</a></li>
     <li><a href="#setup"><span>01</span>The experiment</a></li>
     <li><a href="#thermo"><span>02</span>Thermodynamics</a></li>
     <li><a href="#kinetics"><span>03</span>Reversibility</a></li>
@@ -272,6 +275,141 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-si
     </div>
   </div>
 </header>
+
+<!-- ============ 00 ============ -->
+<section id="intro">
+  <div class="sec-head"><span class="eyebrow">00 · Introduction</span><h2>Electrochemical reactions and how we measure them</h2></div>
+  <div class="prose">
+    <h3>What is an electrochemical reaction?</h3>
+    <p>An <b>electrochemical reaction</b> is a redox reaction in which electrons move between a chemical species and an <b>electrode</b>, a conductor such as a metal or carbon dipped in the solution. Instead of passing directly from the reducing agent to the oxidizing agent, the electrons travel through an external circuit. The reaction is split into two <b>half-reactions</b> at two separate electrodes: <b>oxidation</b> (loss of electrons) at the <b>anode</b> and <b>reduction</b> (gain of electrons) at the <b>cathode</b>.</p>
+    <p>Electrochemistry runs in two directions. In a <b>galvanic cell</b> a spontaneous reaction pushes electrons through the wire and produces a voltage; a battery works this way. In an <b>electrolytic cell</b> an external power supply forces a reaction that would not happen on its own, as in electroplating or splitting water. The two examples below show one of each.</p>
+  </div>
+  <div class="eq"><span class="lbl">Example 1 · A spontaneous reaction: the Daniell cell</span>Anode (oxidation): Zn(s) → Zn<sup>2+</sup>(aq) + 2e<sup>−</sup><br>Cathode (reduction): Cu<sup>2+</sup>(aq) + 2e<sup>−</sup> → Cu(s)<br>Overall: Zn(s) + Cu<sup>2+</sup>(aq) → Zn<sup>2+</sup>(aq) + Cu(s) &nbsp;&nbsp; <i>E</i>°<sub>cell</sub> = 0.34 − (−0.76) = 1.10 V<span class="gloss">Drop a zinc strip into copper sulfate and copper plates out on the zinc, but the energy is lost as heat. Put the zinc and copper in separate beakers joined by a wire and a salt bridge, and the same electrons now flow through the wire, where a voltmeter reads 1.10 V. That voltage is the free energy of the reaction: Δ<i>G</i>° = −<i>nFE</i>° = −2 × 96 485 × 1.10 ≈ −212 kJ mol<sup>−1</sup>.</span></div>
+  <div class="eq"><span class="lbl">Example 2 · A driven reaction: ferrocene at a working electrode</span>Fc → Fc<sup>+</sup> + e<sup>−</sup> &nbsp;&nbsp;(electrode held positive of about +0.43 V vs Ag/AgCl)<br>Fc<sup>+</sup> + e<sup>−</sup> → Fc &nbsp;&nbsp;(electrode held negative of about +0.43 V)<span class="gloss">Here there is no second reactant in the beaker. A potentiostat sets the electrode potential, which decides whether the electrode pulls electrons out of ferrocene (Fc, iron(II)) or pushes them into ferrocenium (Fc<sup>+</sup>, iron(III)). Each converted molecule sends exactly one electron through the circuit. This is the reaction you will see throughout this module.</span></div>
+  <div class="prose">
+    <p>Batteries, fuel cells, corrosion, electroplating, the glucose meter and nerve signalling all involve electrochemical reactions. What makes them so useful in the lab is that <b>the electrons can be measured directly</b>, and each electrical quantity maps onto a chemical one:</p>
+    <ul>
+      <li><b>Potential, <i>E</i> (volts)</b> measures the driving force, that is, the free energy of the reaction (Δ<i>G</i> = −<i>nFE</i>), and through the Nernst equation it depends on the concentrations of the species involved.</li>
+      <li><b>Current, <i>i</i> (amperes)</b> measures the rate: how many moles react per second (<i>i</i> = <i>nF</i> d<i>N</i>/d<i>t</i>).</li>
+      <li><b>Charge, <i>Q</i> (coulombs)</b> measures the amount: how many moles reacted in total (Faraday's law, <i>Q</i> = <i>nFN</i>).</li>
+    </ul>
+    <p>The quantitative techniques of electrochemistry differ mainly in <b>which quantity you control and which you measure</b>. If you measure the potential while letting essentially no current flow, you are doing <b>potentiometry</b>. If you control the potential and measure the current, you are doing <b>voltammetry</b>. <b>Cyclic voltammetry</b> is one particular kind of voltammetry, and the subject of this module.</p>
+
+    <h3>Potentiometry: measure the potential, with no current</h3>
+    <p>In potentiometry you connect an <b>indicator electrode</b> and a <b>reference electrode</b> to a high-impedance voltmeter and read the potential difference between them. Because almost no current flows, the solution is not changed by the measurement; the cell sits at equilibrium and its potential follows the Nernst equation. The indicator electrode is chosen to respond to one species, often through a membrane that only that ion can cross (an <b>ion-selective electrode</b>, ISE).</p>
+  </div>
+  <div class="eq"><span class="lbl">Potentiometric response, 25 °C</span><i>E</i> = <i>K</i> + <span class="frac"><span>0.05916 V</span><span><i>n</i></span></span> log <i>a</i> &nbsp;&nbsp;&nbsp; glass pH electrode: <i>E</i> = <i>K</i> − 0.05916 V × pH<span class="gloss"><i>a</i> is the activity of the ion the electrode responds to (roughly its concentration in dilute solution), <i>n</i> is its charge (with sign; the slope is negative for anions), and <i>K</i> is a constant found by calibration. Every tenfold change in activity shifts the potential by 59.16/<i>n</i> mV.</span></div>
+  <div class="prose">
+    <p><b>How it gives quantitative data.</b> You measure the potential of two or more standards, plot <i>E</i> against log <i>a</i> to get a straight calibration line, and read the unknown from it. Alternatively, in a <b>potentiometric titration</b>, you follow the potential as titrant is added and locate the equivalence point at the steepest jump, which gives the concentration by stoichiometry. Potentiometry also yields thermodynamic constants such as p<i>K</i><sub>a</sub>, <i>K</i><sub>sp</sub> and <i>E</i>° directly.</p>
+    <ul>
+      <li><b>pH meter.</b> A glass electrode responds to H<sup>+</sup>: each pH unit moves the reading by 59.16 mV at 25 °C. Calibrating with pH 4, 7 and 10 buffers sets <i>K</i> and the slope.</li>
+      <li><b>Fluoride in drinking water.</b> A LaF<sub>3</sub>-crystal ISE measures F<sup>−</sup> from about 10<sup>−6</sup> M up to 1 M.</li>
+      <li><b>Titrating iron.</b> Fe<sup>2+</sup> titrated with Ce<sup>4+</sup>, read on a platinum electrode, gives a sharp potential jump at the equivalence point.</li>
+    </ul>
+
+    <h3>Voltammetry: control the potential, measure the current</h3>
+    <p>In voltammetry a <b>potentiostat</b> controls the potential of a <b>working electrode</b> against a reference electrode and measures the current that flows through a third, <b>counter electrode</b>. When the potential is pushed far enough past the formal potential of an analyte, the analyte reacts at the working electrode surface. The current then rises until it is limited by how fast fresh analyte can reach the surface, and that supply rate is proportional to the analyte's concentration. The plot of current against potential is a <b>voltammogram</b>.</p>
+    <p><b>How it gives quantitative data.</b> Two features carry the information. The <b>position</b> of the wave along the potential axis (its half-wave or peak potential) identifies the species, because each redox couple reacts at its own characteristic potential. The <b>height</b> of the wave (a limiting current or a peak current) is proportional to concentration, so a calibration line of current against concentration, or a series of standard additions, gives the amount. Different potential waveforms trade speed for sensitivity:</p>
+    <ul>
+      <li><b>Linear-sweep and rotating-disk voltammetry.</b> The potential is ramped once in one direction. With a rotating electrode the current levels off at a limiting current that is proportional to concentration (the Levich equation).</li>
+      <li><b>Differential-pulse and square-wave voltammetry.</b> Short potential pulses are added on top of the ramp, and the current is sampled so that most of the background charging current is cancelled. The result is a sharp peak whose height measures concentrations down to about 10<sup>−7</sup>–10<sup>−8</sup> M, used for example to assay drugs and vitamins.</li>
+      <li><b>Anodic stripping voltammetry.</b> Pb<sup>2+</sup>, Cd<sup>2+</sup> or Cu<sup>2+</sup> in water are first reduced and concentrated into a film on the electrode for a few minutes, then oxidized ("stripped") off in a quick scan. Each metal gives a peak at its own potential, with detection limits at the part-per-billion level and below.</li>
+      <li><b>Amperometry</b>, a close relative, holds the potential fixed and records current over time. Handheld glucose meters and the Clark oxygen electrode work this way.</li>
+    </ul>
+
+    <h3>Cyclic voltammetry: sweep forward, then back</h3>
+    <p>Cyclic voltammetry (CV) is voltammetry in which the potential is swept linearly from a starting value to a <b>switching potential</b> and then swept back again, so the potential–time waveform is a triangle. The solution is kept still, so the analyte reaches the electrode only by diffusion. On the forward sweep the analyte is converted (for example Fc → Fc<sup>+</sup>), building up product near the electrode; on the return sweep that product is converted back (Fc<sup>+</sup> → Fc). The result is a pair of peaks, one in each direction, and the shape of the pair tells you not just <i>how much</i> analyte is present but <i>how it behaves</i> once it gains or loses electrons.</p>
+    <p><b>How it gives quantitative data.</b> A single CV gives four numbers, the anodic and cathodic peak potentials (<i>E</i><sub>pa</sub>, <i>E</i><sub>pc</sub>) and peak currents (<i>i</i><sub>pa</sub>, <i>i</i><sub>pc</sub>), and each says something specific:</p>
+    <ul>
+      <li>The midpoint <i>E</i><sub>½</sub> = (<i>E</i><sub>pa</sub> + <i>E</i><sub>pc</sub>)/2 estimates the formal potential <i>E</i>°′, a thermodynamic quantity (section 02).</li>
+      <li>The peak separation Δ<i>E</i><sub>p</sub> is about 59/<i>n</i> mV for a fast couple and larger for a slow one, which measures the electron-transfer rate and the number of electrons (sections 03 and 04).</li>
+      <li>The peak current follows the Randles–Sevcik equation, <i>i</i><sub>p</sub> ∝ <i>n</i><sup>3/2</sup><i>AD</i><sup>½</sup><i>Cv</i><sup>½</sup>, which gives the concentration or the diffusion coefficient (sections 05 and 06).</li>
+      <li>The ratio <i>i</i><sub>pc</sub>/<i>i</i><sub>pa</sub> tells you whether the product survives long enough to be converted back, revealing any follow-up chemical reaction.</li>
+    </ul>
+    <p>Typical examples:</p>
+    <ul>
+      <li><b>Ferrocene</b> in acetonitrile gives the textbook reversible CV (Δ<i>E</i><sub>p</sub> ≈ 59 mV, <i>i</i><sub>pc</sub>/<i>i</i><sub>pa</sub> = 1), and is widely used as an internal potential standard in organic solvents.</li>
+      <li><b>Potassium ferricyanide</b>, [Fe(CN)<sub>6</sub>]<sup>3−/4−</sup>, in aqueous KCl is the usual first lab experiment and a quick check of how clean an electrode is.</li>
+      <li><b>New materials</b> for batteries, solar cells and catalysts are screened by CV: the peak potentials of a dye or organic semiconductor estimate its HOMO and LUMO energies, and a catalyst shows up as a large current at a less extreme potential than without it.</li>
+      <li><b>Fast-scan CV</b> at carbon-fibre microelectrodes (hundreds of V s<sup>−1</sup>) tracks the neurotransmitter dopamine in the brain in real time.</li>
+    </ul>
+  </div>
+
+  <div class="fig wide">
+    <div class="fig-title">What each technique controls and what it records</div>
+    <div class="cards">
+      <div class="card">
+        <div><h3>Potentiometry</h3><div class="formula">Measure E at i ≈ 0</div></div>
+        <svg class="mini" viewBox="0 0 240 206" role="img" aria-label="Potentiometry: the potential settles to a steady reading, and the readings of standards fall on a straight line against log activity">
+          <text x="0" y="11" font-size="11" font-weight="600" style="fill:var(--ink2)">You read: E settling to a steady value</text>
+          <path d="M30 20 V88 H230" style="fill:none;stroke:var(--axis);stroke-width:1.2"/>
+          <text x="22" y="28" font-size="10.5" text-anchor="end" style="fill:var(--muted)">E</text><text x="230" y="100" font-size="10.5" text-anchor="end" style="fill:var(--muted)">time</text>
+          <path d="M32 82 C55 40 80 34 228 32" style="fill:none;stroke:var(--s1);stroke-width:2.2;stroke-linecap:round"/>
+          <text x="0" y="117" font-size="11" font-weight="600" style="fill:var(--ink2)">You plot: calibration line</text>
+          <path d="M30 124 V188 H230" style="fill:none;stroke:var(--axis);stroke-width:1.2"/>
+          <text x="22" y="132" font-size="10.5" text-anchor="end" style="fill:var(--muted)">E</text><text x="230" y="200" font-size="10.5" text-anchor="end" style="fill:var(--muted)">log a</text>
+          <line x1="42" y1="180" x2="222" y2="132" style="stroke:var(--s1);stroke-width:1.6"/>
+          <g style="fill:var(--s1)"><circle cx="60" cy="175" r="3.5"/><circle cx="105" cy="163" r="3.5"/><circle cx="150" cy="151" r="3.5"/><circle cx="195" cy="139" r="3.5"/></g>
+          <text x="106" y="183" font-size="10" style="fill:var(--ink2)">slope 59.16/n mV/decade</text>
+        </svg>
+        <p>No current, no change to the sample. The reading is logarithmic in activity and responds to one ion at a time.</p>
+      </div>
+      <div class="card">
+        <div><h3>Voltammetry</h3><div class="formula">Control E, measure i</div></div>
+        <svg class="mini" viewBox="0 0 240 206" role="img" aria-label="Voltammetry: the potential is ramped in one direction and the current rises to a limiting plateau proportional to concentration">
+          <text x="0" y="11" font-size="11" font-weight="600" style="fill:var(--ink2)">You apply: a one-way ramp (or pulses)</text>
+          <path d="M30 20 V88 H230" style="fill:none;stroke:var(--axis);stroke-width:1.2"/>
+          <text x="22" y="28" font-size="10.5" text-anchor="end" style="fill:var(--muted)">E</text><text x="230" y="100" font-size="10.5" text-anchor="end" style="fill:var(--muted)">time</text>
+          <line x1="32" y1="82" x2="226" y2="28" style="stroke:var(--s2);stroke-width:2.2;stroke-linecap:round"/>
+          <text x="0" y="117" font-size="11" font-weight="600" style="fill:var(--ink2)">You record: current vs potential</text>
+          <path d="M30 124 V188 H230" style="fill:none;stroke:var(--axis);stroke-width:1.2"/>
+          <text x="22" y="132" font-size="10.5" text-anchor="end" style="fill:var(--muted)">i</text><text x="230" y="200" font-size="10.5" text-anchor="end" style="fill:var(--muted)">E</text>
+          <line x1="30" y1="138" x2="230" y2="138" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3"/>
+          <path d="M32 183 C105 183 108 138 175 138 L228 138" style="fill:none;stroke:var(--s2);stroke-width:2.2;stroke-linecap:round"/>
+          <text x="36" y="133" font-size="10" style="fill:var(--ink2)">limiting current ∝ C</text>
+          <line x1="106" y1="161" x2="106" y2="188" style="stroke:var(--muted);stroke-width:1"/>
+          <text x="111" y="184" font-size="10" style="fill:var(--ink2)">E½ identifies it</text>
+        </svg>
+        <p>The wave's position identifies the species and its height measures concentration. Pulse and stripping methods reach trace levels.</p>
+      </div>
+      <div class="card">
+        <div><h3>Cyclic voltammetry</h3><div class="formula">Sweep E forward and back, measure i</div></div>
+        <svg class="mini" viewBox="0 0 240 206" role="img" aria-label="Cyclic voltammetry: a triangular potential waveform gives a pair of oxidation and reduction peaks">
+          <text x="0" y="11" font-size="11" font-weight="600" style="fill:var(--ink2)">You apply: a triangle wave</text>
+          <path d="M30 20 V88 H230" style="fill:none;stroke:var(--axis);stroke-width:1.2"/>
+          <text x="22" y="28" font-size="10.5" text-anchor="end" style="fill:var(--muted)">E</text><text x="230" y="100" font-size="10.5" text-anchor="end" style="fill:var(--muted)">time</text>
+          <path d="M32 82 L130 28 L228 82" style="fill:none;stroke:var(--s3);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"/>
+          <text x="134" y="26" font-size="10" style="fill:var(--ink2)">switch</text>
+          <text x="0" y="117" font-size="11" font-weight="600" style="fill:var(--ink2)">You record: a pair of peaks</text>
+          <path d="M30 124 V188 H230" style="fill:none;stroke:var(--axis);stroke-width:1.2"/>
+          <text x="22" y="132" font-size="10.5" text-anchor="end" style="fill:var(--muted)">i</text><text x="230" y="200" font-size="10.5" text-anchor="end" style="fill:var(--muted)">E</text>
+          <line x1="30" y1="158" x2="230" y2="158" style="stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3"/>
+          <path d="M32 157 C95 157 115 152 128 136 C136 126 146 124 156 132 C176 146 205 146 226 147 C220 156 190 158 168 161 C146 164 134 186 118 186 C102 186 85 162 32 158" style="fill:none;stroke:var(--s3);stroke-width:2.2;stroke-linejoin:round"/>
+          <text x="160" y="130" font-size="10" style="fill:var(--ink2)">E<tspan font-size="8" dy="2">pa</tspan><tspan dy="-2">, i</tspan><tspan font-size="8" dy="2">pa</tspan></text>
+          <text x="44" y="183" font-size="10" style="fill:var(--ink2)">E<tspan font-size="8" dy="2">pc</tspan><tspan dy="-2">, i</tspan><tspan font-size="8" dy="2">pc</tspan></text>
+        </svg>
+        <p>Both halves of the redox couple are seen in one scan, so the peaks report thermodynamics, kinetics and product stability as well as concentration.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="prose"><h3>The three techniques side by side</h3></div>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Potentiometry</th><th>Voltammetry (linear-sweep, pulse, stripping)</th><th>Cyclic voltammetry</th></tr></thead>
+    <tbody>
+      <tr><td>What you control</td><td>Nothing; the cell is left at equilibrium</td><td>The working-electrode potential, ramped or pulsed in one direction</td><td>The working-electrode potential, swept forward to a switching potential and back</td></tr>
+      <tr><td>What you measure</td><td>Potential, at essentially zero current</td><td>Current as a function of potential</td><td>Current as a function of potential, in both directions</td></tr>
+      <tr><td>Setup</td><td>Two electrodes (indicator, often ion-selective, plus reference) and a high-impedance voltmeter such as a pH meter. Stirring is fine; no supporting electrolyte or degassing needed.</td><td>Three electrodes (working, reference, counter) and a potentiostat; about 0.1 M supporting electrolyte; O<sub>2</sub> usually removed. Stirred or rotating electrode for hydrodynamic and stripping methods.</td><td>Three electrodes and a potentiostat; about 0.1 M supporting electrolyte; degassed with N<sub>2</sub> or Ar; <b>unstirred</b> during the scan so transport is by diffusion only.</td></tr>
+      <tr><td>Shape of the data</td><td>A single steady reading; <i>E</i> vs log <i>a</i> is a straight line</td><td>A sigmoidal wave or a single peak</td><td>A closed loop with an anodic and a cathodic peak</td></tr>
+      <tr><td>Species analyzed</td><td>Ions with a selective electrode (H<sup>+</sup>, Na<sup>+</sup>, K<sup>+</sup>, Ca<sup>2+</sup>, F<sup>−</sup>, Cl<sup>−</sup>, NO<sub>3</sub><sup>−</sup>) and redox couples in titrations. Responds to the free ion's activity, not its total concentration.</td><td>Any species that can be oxidized or reduced in the solvent's potential window: metal ions, O<sub>2</sub>, drugs, vitamins and other organic molecules. Several can be measured in one scan if their potentials differ.</td><td>Electroactive molecules, metal complexes and organometallics, biomolecules, adsorbed films and electrode materials, especially when both the oxidized and reduced forms matter.</td></tr>
+      <tr><td>Main quantitative output</td><td>Activity or concentration of one ion; p<i>K</i><sub>a</sub>, <i>K</i><sub>sp</sub>, <i>E</i>°; titration end points</td><td>Concentration (from the limiting or peak current) and identity (from <i>E</i><sub>½</sub> or <i>E</i><sub>p</sub>)</td><td><i>E</i>°′, number of electrons, electron-transfer rate, diffusion coefficient, product stability, adsorption, and concentration</td></tr>
+      <tr><td>Typical working range</td><td>About 10<sup>−6</sup> to 1 M for most ISEs (pH electrodes span 14 decades of H<sup>+</sup>)</td><td>10<sup>−5</sup> M (linear sweep) down to 10<sup>−8</sup> M (pulse) and 10<sup>−10</sup> M (stripping)</td><td>About 10<sup>−5</sup> to 10<sup>−2</sup> M; teaching labs usually use 1–5 mM</td></tr>
+      <tr><td>Accuracy and precision</td><td>Readings to ±0.1 mV, but the response is logarithmic: a 1 mV error is about 4 % in activity for a 1+ ion and 8 % for a 2+ ion. pH to about ±0.02 with careful calibration.</td><td>Current is linear in concentration, so precision of about 1–5 % is routine. Pulse and stripping methods are the most sensitive electroanalytical techniques for trace analysis.</td><td>Peak potentials to within a few mV. Peak currents to about 5–10 %, limited by subtracting the sloping charging-current background, so CV is better for diagnosing a reaction than for trace quantitation.</td></tr>
+      <tr><td>Real-world applications</td><td>pH meters; clinical blood analyzers for Na<sup>+</sup>, K<sup>+</sup> and Ca<sup>2+</sup>; fluoride and nitrate in water; the oxygen (lambda) sensor in car exhausts</td><td>Lead and other heavy metals in drinking water (stripping); drug and vitamin assays; glucose meters and dissolved-O<sub>2</sub> probes (amperometry)</td><td>Characterizing catalysts, battery and supercapacitor materials and solar-cell dyes; studying reaction mechanisms; corrosion; dopamine sensing in the brain (fast-scan CV)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><b>Where this module goes next</b><span>The rest of this primer is about cyclic voltammetry. Section 01 sets up the three-electrode cell and explains what the current means; sections 02 to 06 then show how each feature of a CV (peak position, peak separation, peak height and its dependence on scan rate) turns into a number you can report from your lab data.</span></div>
+</section>
 
 <!-- ============ 01 ============ -->
 <section id="setup">
