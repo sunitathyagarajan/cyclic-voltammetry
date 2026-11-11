@@ -138,6 +138,18 @@ dl.ro dd{margin:0;font-family:var(--mono);text-align:right;font-variant-numeric:
 .mini{display:block;width:100%;max-width:300px;height:auto}
 .mini text{font-family:var(--sans)}
 
+/* pH meter display: an instrument LCD, the same in light and dark themes */
+.meter{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;background:#15211A;color:#A6EDBB;border:5px solid var(--axis);border-radius:12px;padding:14px 18px;font-variant-numeric:tabular-nums}
+.meter .m-big{font:600 clamp(2.4rem,7cqi,3.2rem)/1 var(--mono);letter-spacing:.02em;transition:opacity .2s}
+.meter .m-big.dim{opacity:.55}
+.meter .m-unit{font:600 1.05rem var(--sans);margin-left:8px;opacity:.85}
+.meter .m-side{display:grid;grid-template-columns:auto auto;gap:2px 14px;font:500 .82rem var(--mono)}
+.meter .m-side span:nth-child(odd){opacity:.6}
+
+/* molecule view for the CV example */
+.mcbox{display:block;width:100%;height:auto;overflow:hidden;border-radius:8px}
+.mcbox text{font-family:var(--sans)}
+
 /* tables */
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:560px}
@@ -291,6 +303,36 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-si
       <li><b>Fluoride in drinking water.</b> A LaF<sub>3</sub>-crystal ISE measures F<sup>−</sup> from about 10<sup>−6</sup> M up to 1 M.</li>
       <li><b>Titrating iron.</b> Fe<sup>2+</sup> titrated with Ce<sup>4+</sup>, read on a platinum electrode, gives a sharp potential jump at the equivalence point.</li>
     </ul>
+    <p>Try the first example below. This glass electrode, like most real ones, is not quite ideal: it reads a few millivolts off at pH 7 and its slope is slightly less than 59.16 mV per pH. Measure a sample before and after calibrating to see why the buffers matter.</p>
+  </div>
+  <div class="fig">
+    <div>
+      <div class="fig-title">Calibrate a pH meter, then measure a sample</div>
+      <div class="meter" id="phMeter" style="margin-top:8px">
+        <div class="m-main"><span class="m-big" id="phRead">–</span><span class="m-unit">pH</span></div>
+        <div class="m-side">
+          <span>Potential</span><span id="phmV">–</span>
+          <span>Temp.</span><span id="phTmp">–</span>
+          <span>Status</span><span id="phStat">–</span>
+          <span>Calibration</span><span id="phCalTag">–</span>
+        </div>
+      </div>
+      <div id="phChart" class="chart" style="margin-top:14px"></div>
+      <p class="cap" style="margin-top:6px">The meter turns the electrode potential into pH using its calibration line (solid). The dashed line is how this particular electrode actually responds, which the meter cannot know until you calibrate. The orange dot is the current reading. Automatic temperature compensation (ATC) rescales the slope for the temperature; buffer values are for 25 °C.</p>
+    </div>
+    <div class="side">
+      <div class="ctl"><span class="lab">Solution in the beaker</span><div class="seg" id="phSol"></div></div>
+      <div class="row"><button class="btn" id="phCalBtn" type="button">Calibrate</button><button class="btn ghost" id="phClear" type="button">Clear</button></div>
+      <div class="ctl"><label for="phT">Temperature <output id="phTo">–</output></label><input id="phT" type="range" min="5" max="45" step="1" value="25"></div>
+      <div class="stage" id="phStage"></div>
+      <dl class="ro">
+        <dt>Nernst slope at this T</dt><dd id="phNs">–</dd>
+        <dt>Actual pH of sample</dt><dd id="phTrue">–</dd>
+        <dt>Meter error</dt><dd id="phErr">–</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="prose">
 
     <h3>Voltammetry: control the potential, measure the current</h3>
     <p>In voltammetry a <b>potentiostat</b> controls the potential of a <b>working electrode</b> against a reference electrode and measures the current that flows through a third, <b>counter electrode</b>. When the potential is pushed far enough past the formal potential of an analyte, the analyte reacts at the working electrode surface. The current then rises until it is limited by how fast fresh analyte can reach the surface, and that supply rate is proportional to the analyte's concentration. The plot of current against potential is a <b>voltammogram</b>.</p>
@@ -301,6 +343,32 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-si
       <li><b>Anodic stripping voltammetry.</b> Pb<sup>2+</sup>, Cd<sup>2+</sup> or Cu<sup>2+</sup> in water are first reduced and concentrated into a film on the electrode for a few minutes, then oxidized ("stripped") off in a quick scan. Each metal gives a peak at its own potential, with detection limits at the part-per-billion level and below.</li>
       <li><b>Amperometry</b>, a close relative, holds the potential fixed and records current over time. Handheld glucose meters and the Clark oxygen electrode work this way.</li>
     </ul>
+    <p>The stripping example is worked through below. Set the lead and cadmium levels in a water sample, choose how long to deposit, and run the analysis.</p>
+  </div>
+  <div class="fig">
+    <div>
+      <div class="fig-title">Anodic stripping voltammetry: lead and cadmium in drinking water</div>
+      <div id="asWave" class="chart" style="margin-top:8px"></div>
+      <div class="fig-title" style="margin-top:10px">Stripping voltammogram</div>
+      <div id="asCV" class="chart" style="margin-top:8px"></div>
+      <p class="cap" style="margin-top:6px">Simulated: bismuth-film electrode on a 3 mm glassy-carbon disk in 0.1 M acetate buffer (pH 4.5), deposition at −1.2 V with stirring, then a 100 mV s<sup>−1</sup> sweep. Each peak is drawn as the ideal thin-film stripping shape, broadened a little; real peak potentials shift slightly with the electrode and the electrolyte. The US EPA action level for lead in drinking water is 15 ppb.</p>
+    </div>
+    <div class="side">
+      <div class="ctl"><label for="asPb"><span>Pb<sup>2+</sup> in sample</span> <output id="asPbo">–</output></label><input id="asPb" type="range" min="0" max="30" step="0.5" value="8"></div>
+      <div class="ctl"><label for="asCd"><span>Cd<sup>2+</sup> in sample</span> <output id="asCdo">–</output></label><input id="asCd" type="range" min="0" max="30" step="0.5" value="4"></div>
+      <div class="ctl"><label for="asT">Deposition time <output id="asTo">–</output></label><input id="asT" type="range" min="30" max="300" step="30" value="120"></div>
+      <button class="btn" id="asRun" type="button">Run analysis</button>
+      <div class="stage" id="asStage"></div>
+      <dl class="ro">
+        <dt>Pb collected in film</dt><dd id="asPbN">–</dd>
+        <dt>Cd collected in film</dt><dd id="asCdN">–</dd>
+        <dt>Pb peak height</dt><dd id="asPbI">–</dd>
+        <dt>Cd peak height</dt><dd id="asCdI">–</dd>
+        <dt>Pb sensitivity</dt><dd id="asSens">–</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="prose">
 
     <h3>Cyclic voltammetry: sweep forward, then back</h3>
     <p>Cyclic voltammetry (CV) is voltammetry in which the potential is swept linearly from a starting value to a <b>switching potential</b> and then swept back again, so the potential–time waveform is a triangle. The solution is kept still, so the analyte reaches the electrode only by diffusion. On the forward sweep the analyte is converted (for example Fc → Fc<sup>+</sup>), building up product near the electrode; on the return sweep that product is converted back (Fc<sup>+</sup> → Fc). The result is a pair of peaks, one in each direction, and the shape of the pair tells you not just <i>how much</i> analyte is present but <i>how it behaves</i> once it gains or loses electrons.</p>
@@ -318,6 +386,41 @@ footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-si
       <li><b>New materials</b> for batteries, solar cells and catalysts are screened by CV: the peak potentials of a dye or organic semiconductor estimate its HOMO and LUMO energies, and a catalyst shows up as a large current at a less extreme potential than without it.</li>
       <li><b>Fast-scan CV</b> at carbon-fibre microelectrodes (hundreds of V s<sup>−1</sup>) tracks the neurotransmitter dopamine in the brain in real time.</li>
     </ul>
+    <p>Below, the ferrocene example is shown at the level of molecules. Each dot does a random walk at ferrocene's real diffusion rate. Whenever a dot touches the electrode, it ends up as Fc or Fc<sup>+</sup> in the ratio the Nernst equation sets for the potential at that moment. Play the scan and watch how the peaks, and the four numbers, come out of that.</p>
+  </div>
+  <div class="fig">
+    <div>
+      <div class="fig-title">Ferrocene molecules at the electrode during one scan</div>
+      <svg class="mcbox" id="mcSvg" viewBox="0 0 600 236" style="margin-top:8px" role="img" aria-label="Ferrocene (blue) and ferrocenium (orange) molecules diffusing in the 300 micrometres of solution next to the working electrode">
+        <rect x="0" y="0" width="600" height="206" style="fill:var(--accent-wash)"/>
+        <rect x="0" y="0" width="36" height="206" style="fill:var(--axis)"/>
+        <text transform="translate(23 103) rotate(-90)" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ink)">WE</text>
+        <g id="mcMol"></g>
+        <rect x="0" y="206" width="600" height="30" style="fill:var(--surface)"/>
+        <text id="mcE" x="2" y="227" font-size="15" font-weight="600" style="fill:var(--ink)"></text>
+        <line x1="405" y1="222" x2="592" y2="222" style="stroke:var(--ink2);stroke-width:1.5"/>
+        <line x1="405" y1="217" x2="405" y2="227" style="stroke:var(--ink2);stroke-width:1.5"/>
+        <line x1="592" y1="217" x2="592" y2="227" style="stroke:var(--ink2);stroke-width:1.5"/>
+        <text x="498" y="216" text-anchor="middle" font-size="13" style="fill:var(--ink2)">100 µm</text>
+      </svg>
+      <p class="cap" style="margin-top:6px"><span style="color:var(--s1)">●</span> Fc (ferrocene, reduced) &nbsp; <span style="color:var(--s2)">●</span> Fc<sup>+</sup> (ferrocenium, oxidized). A dark outline flashes when a molecule exchanges an electron with the electrode. Each dot stands for a very large number of real molecules.</p>
+      <div id="mcCV" class="chart" style="margin-top:8px"></div>
+    </div>
+    <div class="side">
+      <div class="row"><button class="btn" id="mcPlay" type="button">Play scan</button><button class="btn ghost" id="mcReset" type="button">Reset</button></div>
+      <div class="ctl"><span class="lab">Speed</span><div class="seg" id="mcSpd"></div></div>
+      <div class="stage" id="mcStage"></div>
+      <dl class="ro">
+        <dt>Time</dt><dd id="mcT">–</dd>
+        <dt>Applied E</dt><dd id="mcEo">–</dd>
+        <dt>Current</dt><dd id="mcI">–</dd>
+        <dt>Fc⁺ in view</dt><dd id="mcFr">–</dd>
+        <dt>E<sub>pa</sub> / i<sub>pa</sub></dt><dd id="mcPa">–</dd>
+        <dt>E<sub>pc</sub> / i<sub>pc</sub></dt><dd id="mcPc">–</dd>
+        <dt>E<sub>½</sub></dt><dd id="mcEh">–</dd>
+        <dt>ΔE<sub>p</sub></dt><dd id="mcDE">–</dd>
+      </dl>
+    </div>
   </div>
 
   <div class="fig wide">
@@ -1121,6 +1224,254 @@ const FCa=analyze(FC);
   btn.textContent=playing?'Pause':'Play';
   btn.onclick=()=>{playing=!playing;btn.textContent=playing?'Pause':'Play';if(playing)requestAnimationFrame(loop);};
   if(playing)requestAnimationFrame(loop);
+})();
+
+/* ---------------- intro · potentiometry: calibrating a pH meter ---------------- */
+(function phMeter(){
+  // This electrode: +12 mV at pH 7 and 98.0 % of the Nernstian slope. The meter does not know either until calibrated.
+  const OFF=12.0, EFF=0.980, IDEAL=59.16;
+  const SOL=[['b4','pH 4.01 buffer',4.01,true],['b7','pH 7.00 buffer',7.00,true],['b10','pH 10.01 buffer',10.01,true],
+             ['lem','Lemon juice',2.30,false],['cof','Black coffee',5.00,false],['sea','Seawater',8.10,false],['amm','Household ammonia',11.60,false]];
+  const nern=T=>0.198416*(T+273.15);                       // mV per pH unit
+  const kT=T=>(T+273.15)/298.15;
+  const trueE=(pH,T)=>OFF+EFF*nern(T)*(7-pH);
+  let sol=SOL[4], T=25, shown=null, target=0, raf=0;
+  const cal=new Map();                                     // buffer key -> {pH, E, T}
+  function fit(){                                          // E = a + b·(7 − pH)·T/298 K, b = slope at 25 °C
+    const pts=[...cal.values()];
+    if(!pts.length)return {a:0,b:IDEAL};
+    const X=pts.map(p=>(7-p.pH)*kT(p.T)), Y=pts.map(p=>p.E);
+    if(pts.length===1)return {a:Y[0]-IDEAL*X[0],b:IDEAL};
+    const n=X.length, mx=X.reduce((s,v)=>s+v,0)/n, my=Y.reduce((s,v)=>s+v,0)/n;
+    let sxy=0,sxx=0;for(let i=0;i<n;i++){sxy+=(X[i]-mx)*(Y[i]-my);sxx+=(X[i]-mx)**2;}
+    const b=sxy/sxx;return {a:my-b*mx,b};
+  }
+  const readPH=(E,c)=>7-(E-c.a)/(c.b*kT(T));
+  const ch=new Chart($('phChart'),{height:270,x:{label:'pH',min:0,max:14,tipName:'pH',tipFmt:v=>v.toFixed(2)},
+    y:{label:'Electrode potential (mV)',min:-460,max:460,tipName:'E',tipFmt:v=>sgn(v,1)+' mV'},series:[],
+    aria:'Electrode potential versus pH: the meter calibration line, the electrode actual response, and the calibration points'});
+  function drawChart(){
+    const c=fit(), xs=[0,14], pts=[...cal.values()];
+    ch.update({series:[
+      {name:'This electrode’s actual response',x:xs,y:xs.map(p=>trueE(p,T)),color:'var(--ref)',width:1.8,dash:'6 5',hover:false},
+      {name:cal.size?'Meter’s calibration line':'Meter’s default line (ideal electrode)',x:xs,y:xs.map(p=>c.a+c.b*kT(T)*(7-p)),color:'var(--s1)',width:2.2,hover:false},
+      {name:'Calibration points',x:pts.map(p=>p.pH),y:pts.map(p=>p.E),color:'var(--s1)',line:false,dots:true,legend:pts.length>0}
+    ]});
+  }
+  function paint(){
+    const c=fit(), stable=Math.abs(target-shown)<0.05, pH=readPH(shown,c), err=readPH(target,c)-sol[2];
+    $('phRead').textContent=pH.toFixed(2);
+    $('phRead').classList.toggle('dim',!stable);
+    $('phmV').textContent=sgn(shown,1)+' mV';
+    $('phTmp').textContent=T+' °C · ATC';
+    $('phStat').textContent=stable?'Stable':'Settling…';
+    $('phCalTag').textContent=cal.size?`${cal.size}-point · slope ${(c.b/IDEAL*100).toFixed(1)} %`:'None';
+    ch.setOverlay('r',Math.min(14,Math.max(0,pH)),shown,'var(--s2)',6);
+    const b=$('phCalBtn');
+    b.disabled=!(sol[3]&&stable);
+    b.textContent=sol[3]?(cal.has(sol[0])?`Recalibrate at pH ${sol[2].toFixed(2)}`:`Calibrate at pH ${sol[2].toFixed(2)}`):'Pick a buffer to calibrate';
+    b.style.opacity=b.disabled?.5:1;
+    $('phClear').disabled=!cal.size;
+    $('phTrue').textContent=sol[2].toFixed(2);
+    $('phErr').textContent=stable?sgn(err,2)+' pH':'–';
+    $('phNs').textContent=nern(T).toFixed(2)+' mV/pH';
+    const e=Math.abs(err).toFixed(2);
+    let h,t;
+    if(!cal.size){h='Not calibrated';t=`The meter assumes an ideal electrode: 0 mV at pH 7 and 59.16 mV per pH unit. This electrode is slightly different, so the reading is off by ${e} pH. Select the pH 7.00 buffer and calibrate.`;}
+    else if(cal.size===1){h='One-point calibration';t=`The offset is now set, but the slope is still assumed ideal. Readings near the buffer you used are right; further away they drift (here ${e} pH off). Add a second buffer, 4.01 or 10.01.`;}
+    else{h=`Calibrated with ${cal.size} buffers`;t=`The meter now converts potential to pH using this electrode's own line (slope ${(c.b/IDEAL*100).toFixed(1)} % of ideal). The error is down to ${e} pH. Try the samples.`;}
+    $('phStage').innerHTML=`<b>${h}</b>${t}`;
+  }
+  function frame(){
+    shown+=(target-shown)*0.08;
+    if(Math.abs(target-shown)<0.05){shown=target;raf=0;}
+    paint();
+    if(raf)raf=requestAnimationFrame(frame);
+  }
+  function setTarget(){
+    target=trueE(sol[2],T);
+    if(reduced||shown===null){shown=target;paint();return;}
+    paint();
+    if(!raf)raf=requestAnimationFrame(frame);
+  }
+  seg($('phSol'),SOL.map(s=>[s[0],s[1]]),sol[0],v=>{sol=SOL.find(s=>s[0]===v);setTarget();});
+  $('phT').addEventListener('input',()=>{T=+$('phT').value;$('phTo').textContent=T+' °C';drawChart();setTarget();});
+  $('phCalBtn').onclick=()=>{if(!sol[3])return;cal.set(sol[0],{pH:sol[2],E:target,T});drawChart();paint();};
+  $('phClear').onclick=()=>{cal.clear();drawChart();paint();};
+  $('phTo').textContent=T+' °C';
+  drawChart();setTarget();
+})();
+
+/* ---------------- intro · voltammetry: anodic stripping of Pb and Cd ---------------- */
+(function stripping(){
+  // Deposition: N = m·A·C·t (stirred, mass-transfer coefficient m). Stripping a thin film at scan rate v gives
+  // i = i_p sech²[nf(E − E_p)/2] with i_p = n²F²vN/(4RT); the peak is broadened by BROAD at constant charge.
+  const MT=2.5e-3, V=0.1, EDEP=-1.2, EEND=-0.3, REST=10, BROAD=1.5, NF=2*f, TSTRIP=(EEND-EDEP)/V;
+  const MET=[{key:'Cd',M:112.41,Ep:-0.80},{key:'Pb',M:207.2,Ep:-0.55}];
+  const Es=[];for(let e=EDEP;e<=EEND+1e-9;e+=0.002)Es.push(+e.toFixed(3));
+  let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const noise=Es.map(()=>(rnd()+rnd()+rnd()-1.5)*0.006);  // fixed, so the trace does not flicker
+  const base=E=>0.12+0.05*(E-EDEP)+0.05*Math.exp((E-EEND)/0.035)-0.25*Math.exp(-(E-EDEP)/0.025);
+  function compute(){
+    const t=+$('asT').value, o={t,m:{}};
+    for(const m of MET){const ppb=+$('as'+m.key).value, C=ppb*1e-9/m.M, N=MT*AREA*C*t;
+      o.m[m.key]={ppb,N,ip:2*FARADAY*N*(NF*V/4)*1e6/BROAD,Ep:m.Ep};}
+    o.I=Es.map((E,i)=>base(E)+noise[i]+MET.reduce((s,m)=>s+o.m[m.key].ip/Math.cosh(NF*(E-m.Ep)/(2*BROAD))**2,0));
+    return o;
+  }
+  const wv=new Chart($('asWave'),{height:160,x:{label:'Time (s)',min:0,tipName:'t',tipFmt:v=>v.toFixed(0)+' s'},y:{label:'E (V)',min:-1.3,max:-0.2},series:[],hover:false,
+    aria:'Potential program: held at −1.2 V during deposition, then swept to −0.3 V'});
+  const cv=new Chart($('asCV'),{height:270,x:{...EAX,min:EDEP,max:EEND},y:{label:'Current (µA)',zero:true,padHi:0.14},series:[],tip:cvTip(),
+    aria:'Stripping voltammogram with a cadmium peak near −0.80 V and a lead peak near −0.55 V'});
+  let run=null;
+  function drawWave(o){
+    const t=o.t, tEnd=t+REST+TSTRIP;
+    wv.update({x:{label:'Time (s)',min:0,max:tEnd,tipName:'t',tipFmt:v=>v.toFixed(0)+' s'},
+      series:[{name:'Applied potential',x:[0,t+REST,tEnd],y:[EDEP,EDEP,EEND],color:'var(--ink2)'}],
+      marks:[{x:t/2,y:-1.05,r:0.01,label:'1 · deposit, stirred',anchor:'middle',dx:0,dy:4,color:'transparent'},
+             {x:t+REST+TSTRIP/2,y:-0.62,r:0.01,label:'2 · strip',anchor:'end',dx:-6,dy:0,color:'transparent'}]});
+  }
+  function drawCV(o,upto,overlay){
+    const n=upto==null?Es.length:upto;
+    const marks=[];
+    if(upto==null)for(const m of MET){const r=o.m[m.key];if(r.ip>0.05){const i=Math.round((m.Ep-EDEP)/0.002);marks.push({x:m.Ep,y:o.I[i],label:m.key,anchor:'middle',dx:0,dy:-12,bold:true,color:'var(--s1)'});}}
+    delete cv.ov.p;
+    cv.update({series:[{name:'Sample',x:Es.slice(0,n),y:o.I.slice(0,n),color:'var(--s1)',width:2.2}],marks,
+      y:{label:'Current (µA)',zero:true,min:Math.min(-0.15,...o.I)-0.05,max:Math.max(0.6,...o.I)*1.14}});
+    if(overlay&&n>0)cv.setOverlay('p',Es[n-1],o.I[n-1],'var(--s2)');
+  }
+  function readouts(o,frac,peaks){
+    for(const m of MET){const r=o.m[m.key];
+      $('as'+m.key+'N').textContent=(r.N*1e12*frac).toFixed(2)+' pmol';
+      $('as'+m.key+'I').textContent=peaks?fuA(r.ip):'–';}
+    const perPpb=2*FARADAY*MT*AREA*(1e-9/207.2)*o.t*(NF*V/4)*1e9/BROAD;   // nA of Pb peak per ppb
+    $('asSens').textContent=peaks?perPpb.toFixed(1)+' nA per ppb':'–';
+  }
+  function stage(h,t){$('asStage').innerHTML=`<b>${h}</b>${t}`;}
+  function idle(){
+    const o=compute();
+    $('asPbo').textContent=o.m.Pb.ppb.toFixed(1)+' ppb';$('asCdo').textContent=o.m.Cd.ppb.toFixed(1)+' ppb';$('asTo').textContent=o.t+' s';
+    delete wv.ov.d;drawWave(o);drawCV(o);readouts(o,1,true);
+    const pb=o.m.Pb.ppb;
+    stage('Reading the result',`Peak position tells you which metal; peak height tells you how much. Doubling the deposition time doubles both peaks, which is how stripping reaches part-per-billion levels.${pb>=15?' This sample is <b style="display:inline;color:var(--bad)">above the 15 ppb action level</b> for lead.':''}`);
+    $('asRun').textContent='Run analysis';
+  }
+  function frame(now){
+    if(!run)return;
+    const o=run.o, el=(now-run.t0)/1000, D1=reduced?0.6:2.2, D2=reduced?0.2:0.5, D3=reduced?0.8:2.6;
+    if(el<D1){
+      const u=el/D1;wv.setOverlay('d',o.t*u,EDEP,'var(--s2)');drawCV(o,0);readouts(o,u,false);
+      stage('1 · Deposit',`The electrode is held at −1.2 V while the solution is stirred. Pb<sup>2+</sup> and Cd<sup>2+</sup> that reach it are reduced and collect in the bismuth film: M<sup>2+</sup> + 2e<sup>−</sup> → M(film). Time: ${Math.round(o.t*u)} of ${o.t} s.`);
+    }else if(el<D1+D2){
+      wv.setOverlay('d',o.t+REST*(el-D1)/D2,EDEP,'var(--s2)');readouts(o,1,false);
+      stage('Rest','Stirring stops for 10 s so the solution is quiet before the scan.');
+    }else if(el<D1+D2+D3){
+      const u=(el-D1-D2)/D3, n=Math.max(1,Math.round(u*Es.length));
+      wv.setOverlay('d',o.t+REST+TSTRIP*u,EDEP+(EEND-EDEP)*u,'var(--s2)');drawCV(o,n,true);
+      stage('2 · Strip','The potential sweeps positive. Each metal is oxidized back out of the film at its own potential, M(film) → M<sup>2+</sup> + 2e<sup>−</sup>, giving a sharp peak: Cd first (about −0.80 V), then Pb (about −0.55 V).');
+    }else{run=null;idle();return;}
+    requestAnimationFrame(frame);
+  }
+  $('asRun').onclick=()=>{
+    if(run){run=null;idle();return;}
+    run={o:compute(),t0:performance.now()};$('asRun').textContent='Stop';requestAnimationFrame(frame);
+  };
+  ['asPb','asCd','asT'].forEach(id=>$(id).addEventListener('input',()=>{run=null;idle();}));
+  idle();
+})();
+
+/* ---------------- intro · cyclic voltammetry: ferrocene molecules during one scan ---------------- */
+(function molecules(){
+  // Particle random walk with ferrocene's D. A molecule that reaches the electrode leaves it as Fc⁺ with
+  // the Nernst probability θ/(1 + θ), θ = exp[f(E − E°′)], i.e. fast (reversible) electron transfer.
+  const s=FC, a=FCa, D=CMP.fc.p.D, E0=CMP.fc.p.E0, NK=s.E.length-1, tEnd=NK*s.dt, H=s.dt;
+  const VIEW=300, YH=104, L=1000, NP=520, SIG=Math.sqrt(2*D*H)*1e4;   // µm
+  const X0=40, PX=(600-X0)/VIEW, Y0=4;
+  const Ea=arr(s.E), Ia=arr(s.I);
+  const gauss=()=>{let u=0;while(!u)u=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*Math.random());};
+  const NS='http://www.w3.org/2000/svg', g=$('mcMol');
+  const els=[];for(let i=0;i<NP;i++){const c=document.createElementNS(NS,'circle');c.setAttribute('r','4.2');c.style.strokeWidth='2';g.append(c);els.push(c);}
+  let P=[], simT=0, k=0, playing=false, speed=1, last=0, acc=0, lastCV=0;
+  const ch=new Chart($('mcCV'),{height:250,x:{...EAX,min:0,max:0.8},y:{...IAX,min:Math.min(...Ia)*1.15,max:Math.max(...Ia)*1.15},series:[],tip:cvTip(),
+    aria:'Ferrocene cyclic voltammogram traced out as the scan proceeds'});
+  function reset(){
+    P=[];for(let i=0;i<NP;i++)P.push({x:Math.random()*L,y:Math.random()*YH,o:0,fl:-1e9,shown:-1});
+    simT=0;k=0;acc=0;
+  }
+  function step(E){
+    const th=Math.exp(f*(E-E0)), pO=th/(1+th), now=performance.now();
+    for(const m of P){
+      m.x+=SIG*gauss(); m.y+=SIG*gauss();
+      if(m.y<0)m.y=-m.y; else if(m.y>YH)m.y=2*YH-m.y;
+      if(m.x>L)m.x=2*L-m.x;
+      if(m.x<0){m.x=-m.x;const o=Math.random()<pO?1:0;if(o!==m.o){m.o=o;m.fl=now;}}
+    }
+  }
+  function paintMol(now){
+    let nV=0,nO=0;
+    P.forEach((m,i)=>{
+      const c=els[i];
+      if(m.x>VIEW+6){if(m.shown!==-2){c.setAttribute('cx','-20');m.shown=-2;}return;}
+      nV++;if(m.o)nO++;
+      c.setAttribute('cx',(X0+m.x*PX).toFixed(1));c.setAttribute('cy',(Y0+m.y*PX).toFixed(1));
+      if(m.shown!==m.o){c.style.fill=m.o?'var(--s2)':'var(--s1)';m.shown=m.o;}
+      c.style.stroke=now-m.fl<380?'var(--ink)':'none';
+    });
+    return nO/Math.max(1,nV);
+  }
+  function drawCV(){
+    const marks=[], guides=[];
+    if(k>a.fi+12)marks.push({x:a.Epf,y:a.ipf,label:'anodic peak',dx:10,dy:2});
+    if(k>a.ri+12){marks.push({x:a.Epr,y:a.ipr,label:"cathodic peak",dx:10,dy:14},{x:a.Ehalf,y:0,r:3.5,label:"E½",dx:6,dy:16,color:"var(--ink2)"});guides.push({type:"v",at:a.Ehalf});}
+    ch.update({series:[{name:'Full scan',x:Ea,y:Ia,color:'var(--ref)',width:1.3,opacity:.45,hover:false,legend:false},
+      {name:'Ferrocene, 100 mV/s',x:Ea.slice(0,k+1),y:Ia.slice(0,k+1),color:'var(--s1)',width:2.4}],marks,guides});
+    ch.setOverlay('p',Ea[k],Ia[k],'var(--s2)');
+  }
+  function readouts(frac){
+    const E=Ea[k], i=Ia[k], fwd=k<=s.nHalf;
+    $('mcT').textContent=(k*s.dt).toFixed(1)+' s';
+    $('mcEo').textContent=fV(E);
+    $('mcI').textContent=fuA(i);
+    $('mcFr').textContent=Math.round(frac*100)+' %';
+    const pa=k>a.fi+12, pc=k>a.ri+12;
+    $('mcPa').textContent=pa?`${fV(a.Epf)} / ${fuA(a.ipf)}`:'–';
+    $('mcPc').textContent=pc?`${fV(a.Epr)} / ${fuA(a.ipr)}`:'–';
+    $('mcEh').textContent=pc?fV(a.Ehalf):'–';
+    $('mcDE').textContent=pc?fmV(a.dEp):'–';
+    const imax=a.ipf;
+    $('mcE').textContent=i>0.04*imax?'← e⁻ flow into the electrode (oxidation)':i<-0.04*imax?'e⁻ flow out of the electrode → (reduction)':'Almost no electron flow';
+    let h,t;
+    if(k===0){h='Ready';t='Every molecule starts as Fc (blue). At 0 V the electrode is far too negative to oxidize it. Press Play scan.';}
+    else if(k>=NK){h='Scan complete';t=`The readout now holds the four numbers. E½ ≈ E°′ (+0.43 V), ΔE<sub>p</sub> ≈ 59 mV means fast electron transfer, and an equal return peak means Fc⁺ is stable. Notice the band of orange Fc⁺ left out in the solution.`;}
+    else if(fwd&&E<E0-0.12){h='Before the wave';t='The potential is still too negative: molecules touching the electrode stay Fc, and almost no current flows.';}
+    else if(fwd&&k<=a.fi+6){h='Oxidation: current rising';t='Fc that touches the electrode now gives up an electron (outline flash) and becomes Fc⁺. The more positive E gets, the more of the surface molecules end up as Fc⁺, so the current climbs.';}
+    else if(fwd){h='Past the anodic peak';t='The layer next to the electrode is almost all Fc⁺. Fresh Fc must diffuse in from farther away, so the current falls even though E keeps rising.';}
+    else if(i>0){h='After the switch';t='E is heading back down but is still positive of E°′, so the little Fc that arrives is still oxidized. The current falls toward zero.';}
+    else if(k<=a.ri+6){h='Reduction: cathodic peak';t='Now the electrode gives electrons back. The Fc⁺ crowded next to the surface turns blue again, and the current changes sign.';}
+    else{h='Past the cathodic peak';t='Most Fc⁺ near the surface has been reduced. What is left has drifted out into the solution, so the cathodic current tails off.';}
+    $('mcStage').innerHTML=`<b>${h}</b>${t}`;
+  }
+  function render(now){const fr=paintMol(now);drawCV();readouts(fr);}
+  function loop(now){
+    if(!playing)return;
+    const dtw=Math.min(0.05,(now-last)/1000);last=now;
+    acc+=dtw*speed;
+    while(acc>=H&&k<NK){step(Ea[k]);k++;acc-=H;}
+    const fr=paintMol(now);
+    if(now-lastCV>90||k>=NK){drawCV();lastCV=now;}else ch.setOverlay('p',Ea[k],Ia[k],'var(--s2)');
+    readouts(fr);
+    if(k>=NK){playing=false;$('mcPlay').textContent='Replay';return;}
+    requestAnimationFrame(loop);
+  }
+  const btn=$('mcPlay');
+  btn.onclick=()=>{
+    if(playing){playing=false;btn.textContent='Play scan';return;}
+    if(k>=NK){reset();}
+    playing=true;btn.textContent='Pause';last=performance.now();requestAnimationFrame(loop);
+  };
+  $('mcReset').onclick=()=>{playing=false;btn.textContent='Play scan';reset();render(performance.now());};
+  seg($('mcSpd'),[[0.25,'¼×'],[1,'Real time'],[4,'4×']],1,v=>{speed=v;});
+  reset();render(0);
 })();
 
 /* ---------------- Nernst explorer ---------------- */

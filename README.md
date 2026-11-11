@@ -6,7 +6,7 @@ An interactive pre-lab module that introduces cyclic voltammetry (CV) to student
 
 ## What it covers
 
-0. **Introduction**: what electrochemical reactions are (Daniell cell, ferrocene), how potential, current and charge map onto free energy, rate and amount, and how potentiometry, voltammetry and cyclic voltammetry each give quantitative data, with a side-by-side comparison table.
+0. **Introduction**: what electrochemical reactions are (Daniell cell, ferrocene), how potential, current and charge map onto free energy, rate and amount, and how potentiometry, voltammetry and cyclic voltammetry each give quantitative data, with a side-by-side comparison table. Three interactive examples: calibrating a pH meter (potentiometry), anodic stripping of lead and cadmium (voltammetry), and a molecule-level animation of ferrocene during one CV scan.
 1. **The experiment**: the three-electrode cell, supporting electrolyte, degassing, what the current measures (a reaction rate), what positive (anodic) and negative (cathodic) current mean, and the IUPAC versus US sign conventions.
 2. **Thermodynamics**: ΔG° = −nFE°, the Nernst equation, formal and half-wave potentials, and a step-through view of concentration profiles that shows why a CV has peaks.
 3. **Reversibility**: Butler–Volmer kinetics, the Matsuda–Ayabe parameter, and example CVs of ferrocene (reversible), potassium ferricyanide (quasi-reversible) and ascorbic acid (irreversible).
